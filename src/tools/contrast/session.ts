@@ -15,7 +15,7 @@ export async function startContrastSession(
   onResult: (result: ContrastSample) => void,
   onEnd: (reason: 'cancelled' | 'error' | 'disconnected') => void = () => {},
 ) {
-  const [injection] = await browser.scripting.executeScript({ target: { tabId }, files: ['/contrast.js'] });
+  const [injection] = await browser.scripting.executeScript({ target: { tabId }, files: ['/contrast.js' as never] });
   signal.throwIfAborted();
   if (!injection?.documentId) throw new Error('Il documento non è più disponibile. Riprova.');
   const session = crypto.randomUUID();

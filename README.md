@@ -1,6 +1,6 @@
 # Swiss Knife
 
-Estensione Chrome MV3 con WXT, React e TypeScript. Un pannello laterale raccoglie strumenti indipendenti: **Lorem Ipsum**, **Compila form**, **Elenca iframe**, **Cattura file multimediali** e **Screenshot**.
+Estensione Chrome MV3 con WXT, React e TypeScript. Un pannello laterale raccoglie strumenti indipendenti: **Lorem Ipsum**, **Compila form**, **Elenca iframe**, **Cattura file multimediali**, **Screenshot**, **Colori** e **Contrasti**.
 
 ## Impostazioni
 
@@ -50,6 +50,14 @@ Le catture non inviano dati a servizi esterni e usano il download nativo di Chro
 **Colori** raccoglie un singolo pixel con il contagocce di Chrome, genera la palette di tutta la pagina con **Genera Palette** oppure estrae la palette degli stili di un elemento scelto con **Da elemento**. La selezione include testo, sfondi, bordi, ombre, gradienti, pseudo-elementi e SVG visibili, ma non analizza i pixel di immagini, video o canvas. Le pagine o iframe che Chrome non può ispezionare restano esclusi.
 
 Il modulo converte HEX, RGB, HSL, OKLab, OKLCH e Display P3, mostra il colore Tailwind CSS 4 più vicino e include la palette Tailwind nella build. La cronologia locale conserva gli ultimi 50 colori senza URL né contenuti della pagina; i duplicati risalgono in cima. Puoi rimuovere i singoli campioni, eliminare quelli selezionati o svuotare tutta la cronologia. Le palette estratte restano temporanee finché non scegli **Salva selezionati**. La cronologia può essere esportata come codici, variabili CSS o classi Tailwind e copiata negli appunti.
+
+## Contrasti
+
+Apri il pannello e scegli **Contrasti**. I campi **Testo** e **Sfondo** partono da nero su bianco. Puoi digitare un HEX, copiarlo, scambiare i due colori o usare il contagocce di Chrome su ciascun campo: il rapporto WCAG 2.1 e i badge AA/AAA (testo normale, testo grande) e 1.4.11 (non-testo) si aggiornano subito. Una riga di anteprima mostra la coppia scelta.
+
+**Da elemento** inietta un mirino sulla pagina attiva: clic o Invio campionano `color`, lo sfondo composto sugli antenati e le proprietà del font. ↑ amplia, ↓ restringe, Esc annulla. Immagini, gradienti o sfondi ancora trasparenti producono un avviso: il HEX è lo stile calcolato, non il pixel. In quel caso usa il contagocce.
+
+Il cambio scheda o la navigazione annullano selettore e contagocce e tolgono le proprietà del font; i due HEX restano. Non viene salvata una cronologia e non partono scansioni automatiche. Pagine Chrome, Web Store, file locali e iframe non accessibili restano esclusi. Il contagocce non è disponibile in ogni contesto Chrome: restano HEX e **Da elemento**.
 
 ## Lorem Ipsum e Compila form
 
