@@ -14,6 +14,9 @@ stats-*.json
 .wxt
 web-ext.config.ts
 
+# Brainstorm companion mockups
+.superpowers/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
