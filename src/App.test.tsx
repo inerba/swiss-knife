@@ -32,6 +32,10 @@ beforeEach(async () => {
   await act(async () => root.render(<App />));
 });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); });
+it('lists Contrasti in the catalog', () => {
+  const names = [...host.querySelectorAll('.tool-card strong')].map(node => node.textContent);
+  expect(names).toContain('Contrasti');
+});
 it('opens a tool, scans and opens the source in an active tab', async () => {
   await click('Elenca iframe');
   expect(host.textContent).toContain('1 iframe trovati');

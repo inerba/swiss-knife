@@ -5,6 +5,7 @@ import { ScreenshotTool } from './screenshots/ScreenshotTool';
 import { LoremIpsumTool } from './lorem-ipsum/LoremIpsumTool';
 import { FormFillerTool } from './form-filler/FormFillerTool';
 import { ColorsTool } from './colors/ColorsTool';
+import { ContrastTool } from './contrast/ContrastTool';
 export const tools: ToolDefinition[] = [{
   id: 'iframes', name: 'Elenca iframe', icon: PanelsTopLeft,
   description: 'Trova i contenuti incorporati e apri il loro URL in una nuova scheda.',
@@ -29,5 +30,9 @@ export const tools: ToolDefinition[] = [{
   id: 'colors', name: 'Colori', icon: Palette,
   description: 'Cattura, crea, converti ed esporta colori e palette.',
   component: ColorsTool,
+}, {
+  id: 'contrast', name: 'Contrasti', icon: Contrast,
+  description: 'Misura il contrasto testo/sfondo e i criteri WCAG 2.1.',
+  component: ContrastTool,
 }];
-import { Camera, FileText, FormInput, Palette, PanelsTopLeft, ScanEye } from 'lucide-react';
+import { Camera, Contrast, FileText, FormInput, Palette, PanelsTopLeft, ScanEye } from 'lucide-react';

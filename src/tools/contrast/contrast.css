@@ -1,0 +1,178 @@
+.contrast-tool {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.contrast-tool p { margin: 0; }
+.contrast-heading h2 { font-size: 1.12rem; margin: 0; }
+.contrast-heading p { margin-top: 4px; color: var(--muted); font-size: .88rem; }
+.contrast-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: stretch;
+  position: relative;
+}
+.contrast-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.contrast-field label {
+  margin: 0;
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+.contrast-field-inner {
+  display: grid;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px;
+  min-height: 72px;
+}
+.contrast-field-inner input {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 7px;
+  background: color-mix(in srgb, Canvas 82%, transparent);
+  color: inherit;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: .82rem;
+}
+.contrast-field-actions {
+  display: flex;
+  gap: 4px;
+}
+.contrast-field-actions button {
+  flex: 1;
+  min-height: 34px;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.contrast-field-actions button svg { width: 16px; height: 16px; }
+.contrast-swap {
+  align-self: center;
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+.contrast-swap svg { width: 16px; height: 16px; }
+.contrast-wide {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.contrast-preview {
+  border-radius: 10px;
+  padding: 14px 12px;
+  border: 1px solid var(--line);
+}
+.contrast-preview span {
+  display: block;
+  font-size: .72rem;
+  opacity: .75;
+  margin-bottom: 4px;
+}
+.contrast-preview p {
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.45;
+}
+.contrast-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  background: Canvas;
+}
+.contrast-ratio {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.contrast-ratio strong {
+  font-size: 1.55rem;
+  letter-spacing: -.04em;
+}
+.contrast-grade { font-weight: 600; font-size: .92rem; }
+.contrast-grade.is-good { color: light-dark(#146c2e, #8ce4a8); }
+.contrast-grade.is-warn { color: light-dark(#9a6700, #f5d565); }
+.contrast-grade.is-bad { color: light-dark(#b42318, #ffb4ab); }
+.contrast-badges {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 12px;
+  font-size: .78rem;
+  color: var(--muted);
+}
+.contrast-badge-group { display: grid; gap: 4px; }
+.contrast-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+.contrast-pill {
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: .7rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.contrast-pill.pass {
+  background: light-dark(#d8f3e0, #1b3d28);
+  color: light-dark(#146c2e, #b6f0c8);
+}
+.contrast-pill.fail {
+  background: light-dark(#fde2df, #3d1b18);
+  color: light-dark(#b42318, #ffb4ab);
+}
+.contrast-pill svg { width: 12px; height: 12px; }
+.contrast-nontext {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.contrast-props {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+}
+.contrast-props h3 { font-size: .92rem; margin: 0 0 4px; }
+.contrast-props div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: .82rem;
+}
+.contrast-props span { color: var(--muted); }
+.contrast-props b { font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+.contrast-status {
+  background: var(--surface);
+  padding: 10px 12px;
+  border-radius: 9px;
+  font-size: .85rem;
+}
+.contrast-status.is-error { color: light-dark(#b42318, #ffb4ab); }
+.contrast-warning {
+  border-left: 3px solid var(--accent);
+  padding: 8px 10px;
+  background: var(--surface);
+  font-size: .85rem;
+}
+.contrast-field-error { font-size: .82rem; color: light-dark(#b42318, #ffb4ab); }
+.contrast-caption { font-size: .82rem; color: var(--muted); }
+.contrast-feedback { font-size: .82rem; color: var(--muted); }
