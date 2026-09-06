@@ -16,7 +16,7 @@ export function ColorExport({ values }: { values: string[] }) {
     catch { setFeedback({ output, error: true }); }
   }
   return <section className="colors-export" aria-labelledby="colors-export-heading">
-    <div className="colors-section-title"><h4 id="colors-export-heading">Copier la sélection</h4><span className="colors-caption">{values.length} {values.length === 1 ? 'colore' : 'colori'}</span></div>
+    <div className="colors-section-title"><h4 id="colors-export-heading">Copia la selezione</h4><span className="colors-caption">{values.length} {values.length === 1 ? 'colore' : 'colori'}</span></div>
     <div className="colors-filter-fields">
       <label>Esporta come<select value={mode} onChange={event => setMode(event.target.value as ExportMode)}>
         <option value="codes">Codici colore</option><option value="css">Variabili CSS</option><option value="tailwind">Classi Tailwind</option>
