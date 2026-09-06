@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { browser } from 'wxt/browser';
 import { activeTab, explainError } from '../../lib/browser';
-import { startColorSession } from './session';
+import { startColorSession, type ColorSessionMode } from './session';
 import type { PickedElement } from './picker';
 
 declare global {
@@ -52,9 +52,10 @@ export function useColorAcquisition(onCapture: (value: string) => Promise<void>)
     };
   }, []);
 
-  async function pickElement() {
+  async function startSession(mode: ColorSessionMode) {
     if (locked.current) return;
-    reset(); clearResult(); locked.current = true; setBusy(true); setError(false); setMessage('Avvio del selettore…');
+    reset(); clearResult(); locked.current = true; setBusy(true); setError(false);
+    setMessage(mode === 'page' ? 'Avvio analisi pagina…' : 'Avvio del selettore…');
     const gen = generation.current;
     try {
       const tab = await activeTab();
@@ -70,12 +71,20 @@ export function useColorAcquisition(onCapture: (value: string) => Promise<void>)
           if (gen !== generation.current) return;
           finish();
           if (reason === 'error' || reason === 'disconnected') { clearResult(); setError(true); }
-        });
+        },
+        { mode });
       if (gen !== generation.current) session.close(); else connection.current = session;
     } catch (reason) {
-      if (gen === generation.current) { finish(); setError(true); setMessage(explainError(reason).replace('premi Aggiorna', 'premi Da elemento')); }
+      if (gen === generation.current) {
+        finish();
+        setError(true);
+        const retry = mode === 'page' ? 'Genera Palette' : 'Da elemento';
+        setMessage(explainError(reason).replace('premi Aggiorna', `premi ${retry}`));
+      }
     }
   }
+  async function pickElement() { await startSession('pick'); }
+  async function pickPage() { await startSession('page'); }
   async function pickPixel() {
     if (!window.EyeDropper || locked.current) return;
     reset(); locked.current = true; setBusy(true); setError(false); setMessage('Scegli un punto sullo schermo. Esc annulla.');
@@ -101,5 +110,5 @@ export function useColorAcquisition(onCapture: (value: string) => Promise<void>)
       else { setError(true); setMessage(explainError(reason)); }
     } finally { if (gen === generation.current) finish(); }
   }
-  return { result, currentResult, message, error, busy, cancel, pickPixel, pickElement, hasEyeDropper: !!window.EyeDropper };
+  return { result, currentResult, message, error, busy, cancel, pickPixel, pickElement, pickPage, hasEyeDropper: !!window.EyeDropper };
 }

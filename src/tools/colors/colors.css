@@ -20,7 +20,7 @@
 .colors-tool :is(input, select, textarea, button, summary):focus-visible { outline: 2px solid var(--colors-primary); outline-offset: 3px; }
 .colors-heading h2 { font-size: 1.35rem; letter-spacing: -.035em; }
 .colors-heading p { margin-top: 3px; color: var(--muted); font-size: .92rem; }
-.colors-acquire { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.colors-acquire { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .colors-acquire button { justify-content: start; gap: 10px; text-align: start; padding: 11px; border-color: var(--line); }
 .colors-acquire button > svg { color: var(--accent); width: 20px; height: 20px; }
 .colors-acquire button span { font-weight: 600; }
@@ -109,6 +109,7 @@
 .colors-tailwind-grid strong { font-size: .82rem; font-weight: 500; }
 .colors-tailwind-grid .colors-code { font-size: .78rem; color: var(--muted); }
 @media (max-width: 360px) {
+  .colors-acquire { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .colors-acquire button { display: grid; gap: 6px; padding: 10px; }
   .colors-acquire small { font-size: .78rem; }
   .colors-editor { padding: 11px; }

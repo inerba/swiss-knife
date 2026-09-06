@@ -1,5 +1,12 @@
 import { browser, type Browser } from 'wxt/browser';
-import { collectColors, installColorPicker } from '../src/tools/colors/picker';
+import { collectColors, installColorPicker, scanPageColors } from '../src/tools/colors/picker';
+
+function parseSession(connection: Browser.runtime.Port) {
+  const match = connection.name.match(/^swiss-color-picker:(pick|page):(.+)$/);
+  if (!match) return null;
+  return { mode: match[1] as 'pick' | 'page', session: match[2]! };
+}
+
 export default defineUnlistedScript(() => {
   const scope = globalThis as typeof globalThis & { __swissColorPickerCleanup?: () => void };
   scope.__swissColorPickerCleanup?.();
@@ -11,11 +18,21 @@ export default defineUnlistedScript(() => {
     if (scope.__swissColorPickerCleanup === cleanup) delete scope.__swissColorPickerCleanup;
   }
   function connect(connection: Browser.runtime.Port) {
-    if (!connection.name.startsWith('swiss-color-picker:') || connection.sender?.id !== browser.runtime.id) return;
+    const parsed = parseSession(connection);
+    if (!parsed || connection.sender?.id !== browser.runtime.id) return;
     clearTimeout(timeout); browser.runtime.onConnect.removeListener(connect);
-    port = connection; const session = connection.name.slice('swiss-color-picker:'.length);
+    port = connection; const { mode, session } = parsed;
     const send = (message: Record<string, unknown>) => { if (!abort.signal.aborted) connection.postMessage({ ...message, session }); };
     connection.onDisconnect.addListener(cleanup);
+    if (mode === 'page') {
+      send({ type: 'ready' });
+      send({ type: 'analysing' });
+      void (async () => {
+        try { send({ type: 'result', result: await scanPageColors(abort.signal) }); }
+        catch (error) { send({ type: 'error', error: String(error) }); }
+      })();
+      return;
+    }
     dispose = installColorPicker(element => {
       send({ type: 'analysing' });
       void (async () => {

@@ -1,4 +1,6 @@
 export interface PickedElement { colors: Array<{ value: string; uses: string[]; count: number }>; partial?: boolean; warnings: string[] }
+export const IFRAME_COLOR_WARNING = 'La pagina contiene iframe o frame: i colori al loro interno potrebbero mancare se Chrome non può ispezionarli.';
+const PARTIAL_TIMEOUT_WARNING = 'Limite di tempo raggiunto: i risultati sono parziali.';
 const COLOR_PROPERTIES = ['color','background-color','border-top-color','border-right-color','border-bottom-color','border-left-color','outline-color','text-decoration-color','fill','stroke','caret-color','column-rule-color'];
 const COLOR_IN_TEXT = /(?:#(?:[\da-f]{3,8})\b|(?:rgba?|hsla?|okl(?:ab|ch)|color)\([^)]*\))/gi;
 
@@ -28,10 +30,16 @@ export async function collectColors(root: Element, signal: AbortSignal): Promise
     if (style.borderTopStyle !== 'none' && Number.parseFloat(style.borderTopWidth) > 0) parse(style.borderTopColor, 'bordo', add);
     parse(style.backgroundImage, 'gradiente', add); parse(style.boxShadow, 'ombra', add); parse(style.textShadow, 'ombra testo', add);
     for (const pseudo of ['::before','::after']) { const pseudoStyle = getComputedStyle(el, pseudo); if (pseudoStyle.content !== 'none' && pseudoStyle.content !== 'normal') for (const property of COLOR_PROPERTIES) parse(pseudoStyle.getPropertyValue(property), 'pseudo-elemento', add); }
-    if (i % 200 === 0) { await new Promise<void>(resolve => requestAnimationFrame(() => resolve())); if (performance.now() - started > 10000) return { colors: [...found.values()].map(item => ({ value: item.value, uses: [...item.uses], count: item.count })).sort((a,b) => b.count-a.count), partial: true, warnings: ['Limite di tempo raggiunto: restringi il blocco per completare l’analisi.'] }; }
+    if (i % 200 === 0) { await new Promise<void>(resolve => requestAnimationFrame(() => resolve())); if (performance.now() - started > 10000) return { colors: [...found.values()].map(item => ({ value: item.value, uses: [...item.uses], count: item.count })).sort((a,b) => b.count-a.count), partial: true, warnings: [PARTIAL_TIMEOUT_WARNING] }; }
   }
   if (all.length > max) warnings.push('Limite di 20.000 elementi raggiunto: i risultati sono parziali.');
   return { colors: [...found.values()].map(item => ({ value: item.value, uses: [...item.uses], count: item.count })).sort((a,b) => b.count-a.count), partial: all.length > max, warnings };
+}
+export async function scanPageColors(signal: AbortSignal): Promise<PickedElement> {
+  const result = await collectColors(document.documentElement, signal);
+  if (!document.querySelector('iframe, frame')) return result;
+  if (result.warnings.includes(IFRAME_COLOR_WARNING)) return result;
+  return { ...result, warnings: [...result.warnings, IFRAME_COLOR_WARNING] };
 }
 
 export function installColorPicker(onPick: (element: Element) => void, onCancel: () => void) {

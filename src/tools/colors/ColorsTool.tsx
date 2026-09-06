@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { Check, History, MousePointer2, Pipette, Save, Trash2, X } from 'lucide-react';
+import { Check, History, MousePointer2, Pipette, Save, SwatchBook, Trash2, X } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { canonical, colorCss, type StoredColor } from './color';
 import { addColorHistory, clearColorHistory, COLOR_HISTORY_KEY, loadColorHistory, removeColorHistory } from './history';
@@ -134,7 +134,10 @@ export function ColorsTool() {
       <button type="button" onClick={() => void acquisition.pickPixel()} disabled={acquisition.busy || saving || !acquisition.hasEyeDropper} aria-describedby={!acquisition.hasEyeDropper ? 'colors-eyedropper-help' : undefined}>
         <Pipette aria-hidden="true" /><span>Contagocce<small>Un punto sullo schermo</small></span>
       </button>
-      <button type="button" onClick={() => { setTab('page'); void acquisition.pickElement(); }} disabled={acquisition.busy}>
+      <button type="button" onClick={() => { setTab('page'); void acquisition.pickPage(); }} disabled={acquisition.busy || saving}>
+        <SwatchBook aria-hidden="true" /><span>Genera Palette<small>Tutti i colori della pagina</small></span>
+      </button>
+      <button type="button" onClick={() => { setTab('page'); void acquisition.pickElement(); }} disabled={acquisition.busy || saving}>
         <MousePointer2 aria-hidden="true" /><span>Da elemento<small>La palette di un blocco</small></span>
       </button>
     </div>
@@ -180,9 +183,9 @@ export function ColorsTool() {
         </>}
       </div>
       <div role="tabpanel" id="colors-panel-page" aria-labelledby="colors-tab-page" hidden={tab !== 'page'} tabIndex={0}>
-        {!acquisition.result ? <div className="colors-empty"><MousePointer2 aria-hidden="true" /><h3>I colori di un elemento</h3><p>Premi “Da elemento”, poi scegli un blocco nella pagina. Potrai salvare i colori che ti servono.</p></div> : <>
+        {!acquisition.result ? <div className="colors-empty"><SwatchBook aria-hidden="true" /><h3>I colori della pagina</h3><p>Premi “Genera Palette” per analizzare tutta la pagina oppure “Da elemento” per un blocco specifico. Potrai salvare i colori che ti servono.</p></div> : <>
           <div className="colors-section-title"><h3>{pageItems.length} colori trovati</h3><button className="colors-quiet" disabled={acquisition.busy} onClick={() => void acquisition.pickElement()}>Nuova selezione</button></div>
-          {acquisition.result.partial && <p className="colors-warning" role="status">Palette parziale: seleziona un blocco più piccolo per completare l’analisi.</p>}
+          {acquisition.result.partial && <p className="colors-warning" role="status">Palette parziale: l’analisi è stata interrotta per limiti di tempo o dimensione.</p>}
           {acquisition.result.warnings.map((warning, index) => <p className="colors-warning" key={index}>{warning}</p>)}
           {pageItems.length > 0 ? <>
             <label className="colors-check"><input type="checkbox" checked={pageSelected.size === pageItems.length} onChange={() => setPageSelected(pageSelected.size === pageItems.length ? new Set() : new Set(pageItems.map(item => item.id)))} />Seleziona tutti</label>

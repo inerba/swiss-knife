@@ -47,7 +47,7 @@ Le catture non inviano dati a servizi esterni e usano il download nativo di Chro
 
 ## Colori
 
-**Colori** raccoglie un singolo pixel con il contagocce di Chrome oppure estrae la palette degli stili di un elemento scelto nella pagina. La selezione include testo, sfondi, bordi, ombre, gradienti, pseudo-elementi e SVG visibili, ma non analizza i pixel di immagini, video o canvas. Le pagine o iframe che Chrome non può ispezionare restano esclusi.
+**Colori** raccoglie un singolo pixel con il contagocce di Chrome, genera la palette di tutta la pagina con **Genera Palette** oppure estrae la palette degli stili di un elemento scelto con **Da elemento**. La selezione include testo, sfondi, bordi, ombre, gradienti, pseudo-elementi e SVG visibili, ma non analizza i pixel di immagini, video o canvas. Le pagine o iframe che Chrome non può ispezionare restano esclusi.
 
 Il modulo converte HEX, RGB, HSL, OKLab, OKLCH e Display P3, mostra il colore Tailwind CSS 4 più vicino e include la palette Tailwind nella build. La cronologia locale conserva gli ultimi 50 colori senza URL né contenuti della pagina; i duplicati risalgono in cima. Puoi rimuovere i singoli campioni, eliminare quelli selezionati o svuotare tutta la cronologia. Le palette estratte restano temporanee finché non scegli **Salva selezionati**. La cronologia può essere esportata come codici, variabili CSS o classi Tailwind e copiata negli appunti.
 
