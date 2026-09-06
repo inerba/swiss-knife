@@ -17,6 +17,16 @@ let host: HTMLDivElement; let root: Root;
 const selected = { images: [{ id: '1', url: 'https://cdn.test/a.png', sources: ['Immagine'], width: 10, height: 10 }], warnings: [], pageUrl: 'https://page.test/' };
 const details = { filename: 'a.png', extension: 'PNG', mime: null, width: 10, height: 10, size: null, verified: false, permission: 'https://cdn.test/*', error: 'Accesso necessario' };
 async function click(text: string) { await act(async () => [...host.querySelectorAll('button')].find(b => b.textContent?.includes(text))!.click()); }
+async function clickEnabled(text: string) {
+  await act(async () => {
+    for (let i = 0; i < 25; i++) {
+      const button = [...host.querySelectorAll('button')].find(b => b.textContent?.includes(text)) as HTMLButtonElement | undefined;
+      if (button && !button.disabled) { button.click(); return; }
+      await Promise.resolve();
+    }
+    throw new Error(`Enabled button “${text}” not found`);
+  });
+}
 async function select(index = 0) { await act(async () => mocks.start.mock.calls[index]![2](selected)); }
 beforeEach(async () => {
   vi.clearAllMocks(); Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
@@ -72,4 +82,50 @@ it('renders HTTP file URLs as copyable links', async () => {
   const link = host.querySelector<HTMLAnchorElement>('.media-url a');
   expect(link?.href).toBe('https://cdn.test/a.png');
   expect(link?.target).toBe('_blank');
+});
+const many = {
+  ...selected,
+  images: [
+    selected.images[0],
+    { id: '2', url: 'https://cdn.test/b.jpg', sources: ['Poster'], width: 8, height: 8 },
+  ],
+};
+async function selectMany() {
+  mocks.read.mockImplementation(async image => ({
+    ...details, filename: String(image.url).split('/').pop(), permission: undefined, error: undefined,
+  }));
+  await act(async () => mocks.start.mock.calls[0]![2](many));
+  await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+}
+it('hides the bulk download until more than one file is listed', async () => {
+  await select();
+  expect([...host.querySelectorAll('button')].some(button => button.textContent?.includes('Scarica tutti'))).toBe(false);
+});
+it('downloads every listed file without a save dialog and reports a partial batch', async () => {
+  mocks.api.downloads.download.mockResolvedValueOnce(10).mockRejectedValueOnce(new Error('NETWORK_FAILED'));
+  await selectMany();
+  await clickEnabled('Scarica tutti');
+  expect(mocks.api.downloads.download).toHaveBeenCalledTimes(2);
+  expect(mocks.api.downloads.download.mock.calls[0]![0]).toMatchObject({
+    url: 'https://cdn.test/a.png', filename: 'cattura-media/page.test/a.png', saveAs: false,
+  });
+  expect(host.textContent).toContain('1 download avviato');
+  expect(host.textContent).toContain('1 non riuscito');
+  expect(host.textContent).toContain('NETWORK_FAILED');
+});
+it('skips page blobs that were never recovered and ignores a finished batch after navigation', async () => {
+  let finish!: (id: number) => void;
+  mocks.api.downloads.download.mockImplementation(() => new Promise(done => { finish = done; }));
+  mocks.read.mockResolvedValue({ ...details, permission: undefined, error: undefined });
+  await act(async () => mocks.start.mock.calls[0]![2]({
+    ...selected,
+    images: [selected.images[0], { id: '2', url: 'blob:https://page.test/2', sources: ['Video'], width: null, height: null }],
+  }));
+  await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+  await clickEnabled('Scarica tutti');
+  expect(host.textContent).toContain('non incluso nel download di gruppo');
+  await act(async () => mocks.api.tabs.onUpdated.addListener.mock.calls[0]![0](1, { status: 'loading' }));
+  await act(async () => finish(10));
+  expect(host.textContent).toContain('Scheda cambiata');
+  expect(host.textContent).not.toContain('download avviati');
 });

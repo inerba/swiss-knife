@@ -49,6 +49,10 @@ export function historyInsert(history: StoredColor[], values: string[]) {
   }
   return next;
 }
+export function historyRemove(history: StoredColor[], ids: Iterable<string>) {
+  const remove = new Set(ids);
+  return history.filter(item => !remove.has(item.id));
+}
 
 // Tailwind CSS v4.3 default palette. Neutrals plus the principal chromatic families;
 // values are bundled so matching works without network access.

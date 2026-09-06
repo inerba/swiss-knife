@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 're
 import { Check, History, MousePointer2, Pipette, Save, Trash2, X } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { canonical, colorCss, type StoredColor } from './color';
-import { addColorHistory, clearColorHistory, COLOR_HISTORY_KEY, loadColorHistory } from './history';
+import { addColorHistory, clearColorHistory, COLOR_HISTORY_KEY, loadColorHistory, removeColorHistory } from './history';
 import { ColorEditor, type ColorSelection } from './ColorEditor';
 import { ColorCollection, type ColorItem } from './ColorCollection';
 import { ColorExport } from './ColorExport';
@@ -93,6 +93,19 @@ export function ColorsTool() {
     } catch { if (alive.current) setHistoryError('Impossibile svuotare la cronologia. Riprova.'); }
     finally { saveLock.current = false; if (alive.current) setSaving(false); }
   }
+  async function remove(ids: string[]) {
+    if (!ids.length || saveLock.current) return;
+    saveLock.current = true; setSaving(true); setHistoryError('');
+    try {
+      const next = await removeColorHistory(ids);
+      if (alive.current) {
+        loadVersion.current++;
+        setHistory(next);
+        setHistoryNotice(ids.length === 1 ? 'Colore rimosso.' : `${ids.length} colori rimossi.`);
+      }
+    } catch { if (alive.current) setHistoryError('Impossibile rimuovere i colori. Riprova.'); }
+    finally { saveLock.current = false; if (alive.current) setSaving(false); }
+  }
   const pageItems: ColorItem[] = [];
   const seen = new Set<string>();
   for (const item of acquisition.result?.colors ?? []) {
@@ -148,11 +161,19 @@ export function ColorsTool() {
               <label className="colors-check"><input type="checkbox" checked={selected.size === history.length} onChange={() => setSelected(selected.size === history.length ? new Set() : new Set(history.map(item => item.id)))} />Seleziona tutti</label>
               <button type="button" className="colors-quiet" disabled={saving} onClick={() => void clear()}><Trash2 aria-hidden="true" /> Svuota</button>
             </div>
-            <p className="colors-caption">Clicca il campione per modificarlo, spunta per copiarlo.</p>
-            <ColorCollection items={history.slice(0, visibleCount)} selected={selected} onToggle={id => toggle(setSelected, id)} onOpen={openColor} />
+            <p className="colors-caption">Clicca il campione per modificarlo, la X per rimuoverlo, spunta per copiarlo.</p>
+            <ColorCollection items={history.slice(0, visibleCount)} selected={selected} onToggle={id => toggle(setSelected, id)} onOpen={openColor} onRemove={id => void remove([id])} />
             {history.length > visibleCount && <button type="button" className="colors-more" onClick={() => setVisibleCount(old => old + 12)}>Mostra altri ({history.length - visibleCount})</button>}
             {!!selectedValues.length && <>
-              <div className="colors-selection-bar"><strong>{selectedValues.length} selezionati</strong><button type="button" className="colors-quiet" onClick={() => setSelected(new Set())}>Deseleziona</button></div>
+              <div className="colors-selection-bar">
+                <strong>{selectedValues.length} selezionati</strong>
+                <div className="colors-selection-actions">
+                  <button type="button" className="colors-quiet" onClick={() => setSelected(new Set())}>Deseleziona</button>
+                  <button type="button" className="colors-quiet" disabled={saving} onClick={() => void remove([...selected])}>
+                    <Trash2 aria-hidden="true" /> Elimina selezionati
+                  </button>
+                </div>
+              </div>
               <ColorExport values={selectedValues} />
             </>}
           </>}

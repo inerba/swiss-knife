@@ -69,6 +69,7 @@ select { width: 100%; padding: 9px 12px; border: 1px solid var(--muted); border-
 .image-metadata dd { margin: 0; overflow-wrap: anywhere; }
 .image-metadata small { display: block; color: var(--muted); }
 .image-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.results-toolbar { margin: 12px 0; }
 .screenshot-actions { display: grid; gap: 8px; margin: 20px 0; }
 .screenshot-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .screenshot-width-hint { margin: 0 0 8px; }

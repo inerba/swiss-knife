@@ -1,5 +1,5 @@
 export interface PickedElement { colors: Array<{ value: string; uses: string[]; count: number }>; partial?: boolean; warnings: string[] }
-const COLOR_PROPERTIES = ['color','backgroundColor','borderTopColor','borderRightColor','borderBottomColor','borderLeftColor','outlineColor','textDecorationColor','fill','stroke','caretColor','columnRuleColor'];
+const COLOR_PROPERTIES = ['color','background-color','border-top-color','border-right-color','border-bottom-color','border-left-color','outline-color','text-decoration-color','fill','stroke','caret-color','column-rule-color'];
 const COLOR_IN_TEXT = /(?:#(?:[\da-f]{3,8})\b|(?:rgba?|hsla?|okl(?:ab|ch)|color)\([^)]*\))/gi;
 
 function parse(value: string, property: string, add: (color: string, use: string) => void) {

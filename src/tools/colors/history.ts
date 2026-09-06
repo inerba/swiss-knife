@@ -1,5 +1,5 @@
 import { browser } from 'wxt/browser';
-import { canonical, colorCss, historyInsert, type StoredColor } from './color';
+import { canonical, colorCss, historyInsert, historyRemove, type StoredColor } from './color';
 export const COLOR_HISTORY_KEY = 'colorHistory.v1';
 export async function loadColorHistory(): Promise<StoredColor[]> {
   const stored = await browser.storage.local.get(COLOR_HISTORY_KEY);
@@ -29,4 +29,12 @@ export async function addColorHistory(values: string[]) {
 }
 export async function clearColorHistory() {
   await locked(async () => { await browser.storage.local.remove(COLOR_HISTORY_KEY); });
+}
+export async function removeColorHistory(ids: Iterable<string>) {
+  return locked(async () => {
+    const next = historyRemove(await loadColorHistory(), ids);
+    if (next.length) await saveColorHistory(next);
+    else await browser.storage.local.remove(COLOR_HISTORY_KEY);
+    return next;
+  });
 }

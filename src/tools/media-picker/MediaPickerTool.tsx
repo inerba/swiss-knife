@@ -6,12 +6,15 @@ import { initialDetails, readDetails, formatBytes } from './metadata';
 import { startSession, type PickerSession } from './session';
 import type { MediaCandidate, MediaDetails, MediaSelection } from './types';
 import { compactPageUrl, formatDuration, mediaLabels } from './format';
+import { bulkDownloadPath, bulkDownloadSummary, downloadUrl } from './download';
 
 type Row = MediaCandidate & { details: MediaDetails; loading: boolean; download?: string; copy?: string };
 export function MediaPickerTool() {
   const [rows, setRows] = useState<Row[]>([]);
   const [selection, setSelection] = useState<MediaSelection | null>(null);
   const [status, setStatus] = useState('');
+  const [bulk, setBulk] = useState('');
+  const [busy, setBusy] = useState(false);
   const session = useRef<PickerSession | undefined>(undefined);
   const abort = useRef(new AbortController());
   const generation = useRef(0);
@@ -25,6 +28,7 @@ export function MediaPickerTool() {
     abort.current = new AbortController(); target.current = undefined; selectionReady.current = false;
     objectUrls.current.forEach(url => URL.revokeObjectURL(url)); objectUrls.current.clear();
     downloads.current.clear();
+    setBulk(''); setBusy(false);
   }
   function patch(id: string, update: Partial<Row>) { setRows(old => old.map(row => row.id === id ? { ...row, ...update } : row)); }
   async function enrich(image: MediaCandidate, gen: number) {
@@ -85,8 +89,8 @@ export function MediaPickerTool() {
     const gen = generation.current;
     patch(row.id, { download: 'Scelta della destinazione…' });
     try {
-      const url = row.details.objectUrl || row.url;
-      if (row.url.startsWith('blob:') && !row.details.objectUrl) throw new Error('Recupera prima il file temporaneo con Riprova metadati. Gli stream MediaSource non sono file scaricabili.');
+      const url = downloadUrl(row);
+      if (!url) throw new Error('Recupera prima il file temporaneo con Riprova metadati. Gli stream MediaSource non sono file scaricabili.');
       const id = await browser.downloads.download({ url, filename: row.details.filename, saveAs: true, conflictAction: 'uniquify' });
       if (gen !== generation.current) return;
       downloads.current.set(id, { id: row.id, generation: gen });
@@ -95,6 +99,37 @@ export function MediaPickerTool() {
       if (gen === generation.current && item?.state === 'complete') patch(row.id, { download: 'Download completato.' });
       if (gen === generation.current && item?.state === 'interrupted') patch(row.id, { download: `Download interrotto: ${item.error || 'riprova'}.` });
     } catch (error) { if (gen === generation.current) patch(row.id, { download: `Download non riuscito: ${explainError(error)}` }); }
+  }
+  async function downloadAll() {
+    const gen = generation.current;
+    const queued = rows.filter(row => downloadUrl(row));
+    const skipped = rows.filter(row => !downloadUrl(row));
+    skipped.forEach(row => patch(row.id, { download: 'File temporaneo non recuperato: non incluso nel download di gruppo.' }));
+    if (!queued.length) { setBulk(bulkDownloadSummary(0, 0, skipped.length)); return; }
+    setBusy(true); setBulk('Avvio dei download…');
+    let started = 0; let failed = 0;
+    try {
+      for (const row of queued) {
+        if (gen !== generation.current) return;
+        patch(row.id, { download: 'Download avviato…' });
+        try {
+          const id = await browser.downloads.download({
+            url: downloadUrl(row)!,
+            filename: bulkDownloadPath(row.details.filename, selection?.pageUrl || ''),
+            saveAs: false,
+            conflictAction: 'uniquify',
+          });
+          if (gen !== generation.current) return;
+          downloads.current.set(id, { id: row.id, generation: gen });
+          started++;
+          setBulk(`Download avviati: ${started}/${queued.length}…`);
+        } catch (error) {
+          failed++;
+          if (gen === generation.current) patch(row.id, { download: `Download non riuscito: ${explainError(error)}` });
+        }
+      }
+      if (gen === generation.current) setBulk(bulkDownloadSummary(started, failed, skipped.length));
+    } finally { if (gen === generation.current) setBusy(false); }
   }
   async function copy(row: Row) {
     const blob = row.details.blob;
@@ -148,6 +183,14 @@ export function MediaPickerTool() {
     {!selection && <button onClick={() => { clear(); setStatus('Selezione annullata. Premi Nuova selezione.'); }}>Annulla selezione</button>}
     {selection && <p className="source">Pagina analizzata <span className="source-compact" title={selection.pageUrl}>{compactPageUrl(selection.pageUrl)}</span></p>}
     {selection?.warnings.map(warning => <p className="notice" key={warning}>{warning}</p>)}
+    {rows.length > 1 && <div className="image-actions results-toolbar">
+      <button
+        onClick={() => void downloadAll()}
+        disabled={busy || rows.some(row => row.loading) || !rows.some(row => downloadUrl(row))}
+        title={rows.some(row => row.loading) ? 'Attendi il recupero dei metadati.' : undefined}
+      ><Download aria-hidden="true" /> Scarica tutti</button>
+    </div>}
+    {bulk && <p role="status" className="muted">{bulk}</p>}
     <ol className="results">{rows.map(row => <li className="frame-card" key={row.id}>
       <div className="image-preview">{row.details.objectUrl && row.details.verified ? (
         row.details.kind === 'video' ? <video src={row.details.objectUrl} controls preload="metadata" aria-label={`Anteprima di ${row.details.filename}`} /> :
@@ -168,7 +211,7 @@ export function MediaPickerTool() {
       {row.details.error && <p className="notice">{row.details.error}</p>}
       {row.details.notice && <p className="notice">{row.details.notice}</p>}
       <div className="image-actions">
-        <button onClick={() => void download(row)} disabled={row.download === 'Scelta della destinazione…' || row.download === 'Download avviato…'}><Download aria-hidden="true" /> {row.details.kind === 'stream' ? 'Scarica playlist' : 'Scarica'}</button>
+        <button onClick={() => void download(row)} disabled={busy || row.download === 'Scelta della destinazione…' || row.download === 'Download avviato…'}><Download aria-hidden="true" /> {row.details.kind === 'stream' ? 'Scarica playlist' : 'Scarica'}</button>
         {row.details.blob && (row.details.mime === 'image/svg+xml' || row.details.kind === 'image') && <button onClick={() => void copy(row)} disabled={row.copy === 'Copia in corso…'}><Clipboard aria-hidden="true" /> Copia</button>}
         <button disabled={!/^https?:/.test(row.url) && !row.details.objectUrl} onClick={() => void (async () => {
           try {
