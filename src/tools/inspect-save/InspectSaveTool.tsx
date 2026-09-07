@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Copy, Download, Expand, FileCode, MousePointerClick, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, Check, Copy, Download, Expand, FileCode, MousePointerClick, X } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { activeTab, explainError } from '../../lib/browser';
 import { inspectFilename } from './capture';
 import { startInspectSession, type InspectSessionControl } from './session';
-import type { InfoRow, InfoSection, InspectSnapshot, PickerCommand } from './types';
+import type { InfoRow, InfoSection, InspectSnapshot, LockedPreview, PickerCommand } from './types';
 import './inspect-save.css';
 
 function ValueCell({ row }: { row: InfoRow }) {
@@ -47,6 +47,7 @@ export function InspectSaveTool() {
   const [status, setStatus] = useState('');
   const [error, setError] = useState(false);
   const [snapshot, setSnapshot] = useState<InspectSnapshot | null>(null);
+  const [lockedPreview, setLockedPreview] = useState<LockedPreview | null>(null);
   const [feedback, setFeedback] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [copyFallback, setCopyFallback] = useState('');
@@ -56,7 +57,7 @@ export function InspectSaveTool() {
   const sessionClose = useRef<InspectSessionControl | null>(null);
   const hadPageStateRef = useRef(false);
   const busyRef = useRef(false);
-  hadPageStateRef.current = !!snapshot || active || busy;
+  hadPageStateRef.current = !!snapshot || active || busy || !!lockedPreview;
   busyRef.current = busy;
 
   const resetSession = useCallback(() => {
@@ -71,6 +72,7 @@ export function InspectSaveTool() {
     resetSession();
     setActive(false);
     setBusy(false);
+    setLockedPreview(null);
     if (clearSnapshot) setSnapshot(null);
     if (message) { setStatus(message); setError(false); }
   }, [resetSession]);
@@ -144,6 +146,7 @@ export function InspectSaveTool() {
     setCopyFallback('');
     setPreviewOpen(false);
     setSnapshot(null);
+    setLockedPreview(null);
     setStatus('Avvio del selettore…');
     const gen = generation.current;
     try {
@@ -160,6 +163,7 @@ export function InspectSaveTool() {
         result => {
           if (gen !== generation.current) return;
           setSnapshot(result);
+          setLockedPreview(null);
           setActive(false);
           setBusy(false);
           setStatus('');
@@ -169,6 +173,11 @@ export function InspectSaveTool() {
           if (gen !== generation.current) return;
           setActive(false);
           setBusy(false);
+          setLockedPreview(null);
+        },
+        preview => {
+          if (gen !== generation.current) return;
+          setLockedPreview(preview);
         },
       );
       if (gen !== generation.current) session.close();
@@ -266,6 +275,26 @@ export function InspectSaveTool() {
               <X aria-hidden="true" /> Annulla
             </button>
           )}
+        </div>
+      )}
+
+      {active && lockedPreview && (
+        <div className="inspect-lock-bar" role="toolbar" aria-label="Conferma selezione">
+          <div className="inspect-lock-summary">
+            <span className="inspect-pill">{lockedPreview.selector}</span>
+            <span className="inspect-pill">{lockedPreview.dimensions}</span>
+          </div>
+          <div className="inspect-lock-actions">
+            <button type="button" onClick={() => sessionClose.current?.sendCommand('navigate-up')} aria-label="Amplia la selezione">
+              <ArrowUp aria-hidden="true" /> Amplia
+            </button>
+            <button type="button" onClick={() => sessionClose.current?.sendCommand('navigate-down')} aria-label="Restringi la selezione">
+              <ArrowDown aria-hidden="true" /> Restringi
+            </button>
+            <button type="button" className="inspect-action-primary" onClick={() => sessionClose.current?.sendCommand('confirm')}>
+              <Check aria-hidden="true" /> Conferma
+            </button>
+          </div>
         </div>
       )}
 

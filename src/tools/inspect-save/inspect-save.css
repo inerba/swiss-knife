@@ -61,6 +61,39 @@
   font-size: .78rem;
   flex-shrink: 0;
 }
+.inspect-lock-bar {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  min-width: 0;
+}
+.inspect-lock-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+.inspect-lock-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+.inspect-lock-actions button {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .82rem;
+}
+.inspect-lock-actions button svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
 .inspect-empty {
   padding: 16px;
   border: 1px dashed var(--line);

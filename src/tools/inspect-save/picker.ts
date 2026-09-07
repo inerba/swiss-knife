@@ -16,7 +16,7 @@ import {
 
 import { sampleElement } from './sample';
 
-import type { PickerCommand, SnapshotPayload } from './types';
+import type { LockedPreview, PickerCommand, SnapshotPayload } from './types';
 
 
 
@@ -34,6 +34,10 @@ export function shouldFollowPointer(locked: boolean, originX: number, originY: n
 
   return Math.hypot(dx, dy) >= POINTER_LOCK_PX;
 
+}
+
+export function shouldIgnorePointerWhenPinned(pinned: boolean) {
+  return pinned;
 }
 
 
@@ -174,6 +178,18 @@ function snapshotPayload(element: Element, view: Window): SnapshotPayload {
 
 
 
+function lockedPreviewFromElement(element: Element): LockedPreview {
+  const sampled = sampleElement(element);
+  return {
+    tag: sampled.tag,
+    tagLabel: sampled.tagLabel,
+    selector: sampled.selector,
+    dimensions: sampled.dimensions,
+  };
+}
+
+
+
 function waitForPaint() {
 
   return new Promise<void>(resolve => {
@@ -202,6 +218,8 @@ export function installInspectPicker(
 
   onCancel: () => void,
 
+  onLock: (preview: LockedPreview) => void,
+
 ): InspectPickerControl {
 
   const cleanups: Array<() => void> = [];
@@ -223,6 +241,8 @@ export function installInspectPicker(
   let lockY = 0;
 
   let choosing = false;
+
+  let pinned = false;
 
   const handlers = {
     expand: () => {},
@@ -331,6 +351,8 @@ export function installInspectPicker(
 
     const navLabel = doc.createElement('span');
 
+    const confirm = doc.createElement('button');
+
 
 
     const layerBase = 'position:fixed;pointer-events:none;inset:0;';
@@ -351,7 +373,7 @@ export function installInspectPicker(
 
     tooltip.style.cssText = 'position:fixed;pointer-events:none;display:none;max-width:min(320px,calc(100vw - 16px));background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:10px 12px;font:12px/1.45 system-ui;color:#2c2c2e;box-shadow:0 8px 20px rgba(0,0,0,.08);';
 
-    hint.textContent = 'Ispeziona e salva · clicca le frecce o usa ↑ ↓ · Invio conferma · Esc annulla';
+    hint.textContent = 'Ispeziona e salva · clicca per fissare · ↑ ↓ naviga · Invio conferma · Esc annulla';
 
     hint.style.cssText = 'position:fixed;top:8px;left:8px;max-width:calc(100vw - 16px);background:#24272e;color:#fff;padding:8px 12px;border-radius:8px;font:13px system-ui;pointer-events:none;';
 
@@ -437,7 +459,15 @@ export function installInspectPicker(
 
     navLabel.style.cssText = 'color:#8e8e93;font-size:11px;';
 
-    nav.append(up, down, navLabel);
+    confirm.type = 'button';
+
+    confirm.textContent = 'Conferma';
+
+    confirm.setAttribute('aria-label', 'Conferma la selezione');
+
+    confirm.style.cssText = 'display:none;margin-left:auto;padding:4px 10px;border:1px solid rgba(99,102,241,.35);border-radius:8px;background:#6366f1;color:#fff;cursor:pointer;font:600 12px/1 system-ui;pointer-events:auto;';
+
+    nav.append(up, down, navLabel, confirm);
 
 
 
@@ -717,6 +747,8 @@ export function installInspectPicker(
 
       draw(pointed);
 
+      if (pinned && pointed) onLock(lockedPreviewFromElement(pointed));
+
     }
 
 
@@ -735,6 +767,8 @@ export function installInspectPicker(
 
       draw(pointed);
 
+      if (pinned && pointed) onLock(lockedPreviewFromElement(pointed));
+
     }
 
 
@@ -743,7 +777,7 @@ export function installInspectPicker(
 
     const move = (event: PointerEvent) => {
 
-      if (disposed || choosing || fromOverlay(event)) return;
+      if (disposed || choosing || shouldIgnorePointerWhenPinned(pinned) || fromOverlay(event)) return;
 
       if (!shouldFollowPointer(locked, lockX, lockY, event.clientX, event.clientY)) return;
 
@@ -786,6 +820,28 @@ export function installInspectPicker(
       host.remove();
 
       style.remove();
+
+    }
+
+
+
+    function pin(element?: Element) {
+
+      if (disposed || choosing || !element) return;
+
+      pointed = element;
+
+      pinned = true;
+
+      confirm.style.display = 'inline-flex';
+
+      tooltip.style.pointerEvents = 'auto';
+
+      draw(element);
+
+      try { confirm.focus({ preventScroll: true }); } catch { /* Focus may fail on some hosts. */ }
+
+      onLock(lockedPreviewFromElement(element));
 
     }
 
@@ -838,7 +894,9 @@ export function installInspectPicker(
 
       block(event);
 
-      void choose(pointed ?? resolveElement(event));
+      if (pinned) return;
+
+      pin(pointed ?? resolveElement(event));
 
     };
 
@@ -872,9 +930,13 @@ export function installInspectPicker(
 
     down.addEventListener('click', event => navEvent(event, shrink));
 
+    confirm.addEventListener('click', event => navEvent(event, () => { if (pointed) void choose(pointed); }));
+
     up.addEventListener('pointerdown', event => navEvent(event, () => {}));
 
     down.addEventListener('pointerdown', event => navEvent(event, () => {}));
+
+    confirm.addEventListener('pointerdown', event => navEvent(event, () => {}));
 
 
 

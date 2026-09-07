@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { navigateDown, navigateUp, parentTarget, shouldFollowPointer } from './picker';
+import { navigateDown, navigateUp, parentTarget, shouldFollowPointer, shouldIgnorePointerWhenPinned } from './picker';
 
 describe('picker navigation helpers', () => {
   it('walks up to the parent element', () => {
@@ -34,5 +34,12 @@ describe('shouldFollowPointer', () => {
     expect(shouldFollowPointer(true, 40, 40, 41, 41)).toBe(false);
     expect(shouldFollowPointer(true, 40, 40, 80, 80)).toBe(true);
     expect(shouldFollowPointer(false, 40, 40, 40, 40)).toBe(true);
+  });
+});
+
+describe('shouldIgnorePointerWhenPinned', () => {
+  it('ignores pointer moves only after the selection is pinned', () => {
+    expect(shouldIgnorePointerWhenPinned(false)).toBe(false);
+    expect(shouldIgnorePointerWhenPinned(true)).toBe(true);
   });
 });

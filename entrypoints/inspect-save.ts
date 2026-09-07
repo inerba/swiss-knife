@@ -67,6 +67,7 @@ export default defineUnlistedScript(() => {
         send({ type: 'snapshot', payload });
       },
       () => send({ type: 'cancelled' }),
+      preview => send({ type: 'locked', preview }),
     );
     send({ type: 'ready' });
   }

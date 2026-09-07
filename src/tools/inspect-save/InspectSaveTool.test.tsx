@@ -171,3 +171,46 @@ it('forwards arrow keys to the picker while active', async () => {
   });
   expect(portPostMessage).toHaveBeenCalledWith({ type: 'command', session, command: 'navigate-up' });
 });
+
+const lockedPreview = { tag: 'div', tagLabel: 'Div', selector: 'div.card', dimensions: '320 × 230' };
+
+it('shows lock controls without capturing the png', async () => {
+  await act(async () => { startButton()!.click(); await Promise.resolve(); });
+  await act(async () => message?.({ type: 'ready', session }));
+  await act(async () => message?.({ type: 'locked', session, preview: lockedPreview }));
+  expect(host.textContent).toContain('Conferma');
+  expect(host.textContent).toContain('div.card');
+  expect(portPostMessage).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'isolate-capture' }));
+  expect(startButton()?.textContent).toContain('Clicca una sezione');
+});
+
+it('sends confirm when the panel confirm button is clicked', async () => {
+  await act(async () => { startButton()!.click(); await Promise.resolve(); });
+  await act(async () => message?.({ type: 'ready', session }));
+  await act(async () => message?.({ type: 'locked', session, preview: lockedPreview }));
+  const confirm = [...host.querySelectorAll('button')].find(button => button.textContent?.includes('Conferma'));
+  await act(async () => { confirm!.click(); await Promise.resolve(); });
+  expect(portPostMessage).toHaveBeenCalledWith({ type: 'command', session, command: 'confirm' });
+});
+
+it('sends navigate-up from the panel lock bar', async () => {
+  await act(async () => { startButton()!.click(); await Promise.resolve(); });
+  await act(async () => message?.({ type: 'ready', session }));
+  await act(async () => message?.({ type: 'locked', session, preview: lockedPreview }));
+  const expand = [...host.querySelectorAll('button')].find(button => button.textContent?.includes('Amplia'));
+  await act(async () => { expand!.click(); await Promise.resolve(); });
+  expect(portPostMessage).toHaveBeenCalledWith({ type: 'command', session, command: 'navigate-up' });
+});
+
+it('clears lock controls after Esc and returns to Seleziona', async () => {
+  await act(async () => { startButton()!.click(); await Promise.resolve(); });
+  await act(async () => message?.({ type: 'ready', session }));
+  await act(async () => message?.({ type: 'locked', session, preview: lockedPreview }));
+  expect(host.textContent).toContain('Conferma');
+  await act(async () => {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+    await Promise.resolve();
+  });
+  expect(host.textContent).not.toContain('Conferma');
+  expect(startButton()?.textContent).toContain('Seleziona');
+});

@@ -1,6 +1,6 @@
 import { browser, type Browser } from 'wxt/browser';
 import { captureElementPng } from './capture';
-import type { InspectSnapshot, PickerCommand, SnapshotPayload } from './types';
+import type { InspectSnapshot, LockedPreview, PickerCommand, SnapshotPayload } from './types';
 
 function isPayload(value: unknown): value is SnapshotPayload {
   if (!value || typeof value !== 'object') return false;
@@ -24,6 +24,7 @@ export async function startInspectSession(
   onStatus: (status: string) => void,
   onResult: (result: InspectSnapshot) => void,
   onEnd: (reason: 'cancelled' | 'error' | 'disconnected') => void = () => {},
+  onLocked: (preview: LockedPreview) => void = () => {},
 ): Promise<InspectSessionControl> {
   const [injection] = await browser.scripting.executeScript({ target: { tabId }, files: ['/inspect-save.js' as never] });
   signal.throwIfAborted();
@@ -80,7 +81,13 @@ export async function startInspectSession(
     if (closed || signal.aborted || message?.session !== session) return;
     if (message.type === 'ready') {
       clearTimeout(timeout);
-      onStatus('Passa col mouse sulle sezioni e clicca. ↑ amplia, ↓ restringe, Esc annulla.');
+      onStatus('Passa col mouse sulle sezioni, clicca per fissare, poi Conferma. ↑ amplia, ↓ restringe, Esc annulla.');
+    } else if (message.type === 'locked') {
+      if (closed || signal.aborted) return;
+      const preview = message.preview as LockedPreview;
+      if (!preview?.selector) return;
+      onLocked(preview);
+      onStatus('Sezione fissata. Regola con ↑ ↓ e premi Conferma.');
     } else if (message.type === 'cancelled') {
       close();
       onStatus('Selezione annullata.');

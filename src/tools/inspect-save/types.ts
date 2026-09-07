@@ -11,6 +11,13 @@ export interface InspectRect {
 
 export type PickerCommand = 'navigate-up' | 'navigate-down' | 'confirm' | 'cancel';
 
+export interface LockedPreview {
+  tag: string;
+  tagLabel: string;
+  selector: string;
+  dimensions: string;
+}
+
 export interface InfoRow {
   label: string;
   value: string;
