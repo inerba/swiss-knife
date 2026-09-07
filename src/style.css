@@ -246,3 +246,14 @@ code, pre, .generated-text, .password-row input { font-family: var(--font-mono);
 @media (max-width: 300px) { .brand { padding-inline: 12px; gap: 8px; } .brand p, .version { display: none; } main { padding: 12px; } }
 @media (forced-colors: active) { .settings-tools input[type=checkbox] { appearance: auto; } .settings-tools input[type=checkbox]::before { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, ::before, ::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+
+/* Stable insertion markers: row geometry stays fixed throughout native dragging. */
+.settings-tools { gap: 16px; padding-block: 8px; }
+.settings-tools > li { position: relative; }
+.settings-tools > li.dragging { opacity: .35; border-style: dashed; }
+.settings-tools > li.drop-before::after,
+.settings-tools > li.drop-after::after { content: ''; position: absolute; left: 0; right: 0; height: 4px; border-radius: 999px; background: var(--ios-accent); box-shadow: 0 0 0 3px var(--ios-accent-soft); pointer-events: none; }
+.settings-tools > li.drop-before::after { top: -11px; }
+.settings-tools > li.drop-after::after { bottom: -11px; }
+.settings-tools:has(.dragging) { cursor: grabbing; }
+@media (forced-colors: active) { .settings-tools > li::after { background: Highlight; } }
