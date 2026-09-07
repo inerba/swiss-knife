@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, PocketKnife, Settings } from 'lucide-react';
+import { ArrowLeft, PocketKnife, Settings, SlidersHorizontal } from 'lucide-react';
 import { tools } from './tools/registry';
 import { browser } from 'wxt/browser';
 import { CATALOG_ORDER_KEY, isCatalogOrder, loadToolPreferences, saveCatalogOrder, TOOL_PREFERENCES_KEY, type CatalogOrder, type ToolPreferences } from './lib/preferences';
@@ -7,6 +7,7 @@ import { GlobalSiteAccessNotice } from './components/GlobalSiteAccessNotice';
 export function App() {
   const [selected, setSelected] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  const [catalogControlsOpen, setCatalogControlsOpen] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const previous = useRef<string | null>(null);
   const [preferences, setPreferences] = useState<ToolPreferences | null>(null);
@@ -32,10 +33,12 @@ export function App() {
         <h2 ref={heading} tabIndex={-1} className="visually-hidden">{tool.name}</h2>
         <tool.component />
       </> : <>
-        <div className="section-heading"><h2>I tuoi strumenti</h2><span className="badge">{active.length}</span></div>
-        <label htmlFor="catalog-order">Ordina per</label><select id="catalog-order" value={catalogOrder} onChange={event => { const next = event.target.value as CatalogOrder; setCatalogOrder(next); void saveCatalogOrder(next); }}><option value="custom">Ordine personalizzato</option><option value="alphabetical">Ordine alfabetico</option></select>
-        <label htmlFor="search">Cerca uno strumento</label>
-        <input id="search" type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Nome o funzione…" />
+        <div className="section-heading catalog-heading"><h2>I tuoi strumenti</h2><div className="catalog-heading-actions"><button className="catalog-controls-toggle" type="button" aria-expanded={catalogControlsOpen} aria-controls="catalog-controls" onClick={() => setCatalogControlsOpen(open => !open)}><SlidersHorizontal aria-hidden="true" /> Filtra e riordina</button><span className="badge">{active.length}</span></div></div>
+        <div id="catalog-controls" className="catalog-controls" hidden={!catalogControlsOpen}>
+          <label htmlFor="catalog-order">Ordina per</label><select id="catalog-order" value={catalogOrder} onChange={event => { const next = event.target.value as CatalogOrder; setCatalogOrder(next); void saveCatalogOrder(next); }}><option value="custom">Ordine personalizzato</option><option value="alphabetical">Ordine alfabetico</option></select>
+          <label htmlFor="search">Cerca uno strumento</label>
+          <input id="search" type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Nome o funzione…" />
+        </div>
         <ul className="tool-grid">{visible.map(item => {
           const Icon = item.icon;
           return <li key={item.id}>

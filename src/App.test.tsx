@@ -36,6 +36,19 @@ it('lists Contrasti in the catalog', () => {
   const names = [...host.querySelectorAll('.tool-card strong')].map(node => node.textContent);
   expect(names).toContain('Contrasti');
 });
+it('keeps catalog controls hidden until the filter and sort button is activated', async () => {
+  const catalogControls = host.querySelector<HTMLDivElement>('#catalog-controls')!;
+  expect(catalogControls.hidden).toBe(true);
+  const toggle = [...host.querySelectorAll('button')].find(button => button.textContent?.includes('Filtra e riordina'))!;
+  expect(toggle.getAttribute('aria-expanded')).toBe('false');
+  await act(async () => toggle.click());
+  expect(toggle.getAttribute('aria-expanded')).toBe('true');
+  expect(catalogControls.hidden).toBe(false);
+  expect(host.querySelector('#catalog-order')).not.toBeNull();
+  expect(host.querySelector('#search')).not.toBeNull();
+  await act(async () => toggle.click());
+  expect(catalogControls.hidden).toBe(true);
+});
 it('opens a tool, scans and opens the source in an active tab', async () => {
   await click('Elenca iframe');
   expect(host.textContent).toContain('1 iframe trovati');

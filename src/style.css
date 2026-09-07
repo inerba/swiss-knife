@@ -219,6 +219,16 @@ button:active:not(:disabled) { transform: scale(.97); }
 .icon-button { width: 30px; height: 30px; padding: 6px; }
 .icon-button svg { width: 16px; height: 16px; }
 .tool-grid { margin: 14px 0; gap: 10px; }
+.catalog-heading { flex-wrap: nowrap; }
+.catalog-heading-actions { display: flex; align-items: center; gap: 8px; }
+.catalog-controls-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding-inline: 10px; color: var(--ui-text); background: var(--bg); }
+.catalog-controls-toggle[aria-expanded="true"] { color: var(--ios-accent-hover); border-color: var(--ios-accent-glow); background: var(--ios-accent-soft); }
+.catalog-controls-toggle svg { width: 15px; height: 15px; }
+.catalog-controls { display: grid; gap: 6px; padding: 10px 12px 12px; margin-top: 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); box-shadow: var(--shadow-card); }
+.catalog-controls[hidden] { display: none; }
+.catalog-controls label { margin-top: 0; }
+.catalog-controls label:not(:first-child) { margin-top: 6px; }
+@media (max-width: 320px) { .catalog-heading { align-items: flex-start; } .catalog-heading-actions { gap: 5px; } .catalog-controls-toggle { padding-inline: 8px; font-size: 11px; } }
 .tool-card { border-radius: 16px; padding: 12px; min-height: 72px; transition: box-shadow .15s, border-color .15s, background .15s; }
 .tool-card:hover:not(:disabled) { background: var(--bg); border-color: var(--ios-accent-glow); box-shadow: var(--shadow-hover); }
 .tool-card strong { font-size: 14px; line-height: 1.4; font-weight: 600; }
