@@ -4,7 +4,12 @@ export interface InspectRect {
   width: number;
   height: number;
   viewportWidth: number;
+  viewportHeight: number;
+  scrollX: number;
+  scrollY: number;
 }
+
+export type PickerCommand = 'navigate-up' | 'navigate-down' | 'confirm' | 'cancel';
 
 export interface InfoRow {
   label: string;

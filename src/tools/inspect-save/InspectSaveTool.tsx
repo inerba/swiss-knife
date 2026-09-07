@@ -3,8 +3,8 @@ import { Copy, Download, Expand, FileCode, MousePointerClick, X } from 'lucide-r
 import { browser } from 'wxt/browser';
 import { activeTab, explainError } from '../../lib/browser';
 import { inspectFilename } from './capture';
-import { startInspectSession } from './session';
-import type { InfoRow, InfoSection, InspectSnapshot } from './types';
+import { startInspectSession, type InspectSessionControl } from './session';
+import type { InfoRow, InfoSection, InspectSnapshot, PickerCommand } from './types';
 import './inspect-save.css';
 
 function ValueCell({ row }: { row: InfoRow }) {
@@ -53,7 +53,7 @@ export function InspectSaveTool() {
   const generation = useRef(0);
   const target = useRef<number | undefined>(undefined);
   const abort = useRef(new AbortController());
-  const sessionClose = useRef<{ close(): void } | null>(null);
+  const sessionClose = useRef<InspectSessionControl | null>(null);
   const hadPageStateRef = useRef(false);
   const busyRef = useRef(false);
   hadPageStateRef.current = !!snapshot || active || busy;
@@ -107,12 +107,43 @@ export function InspectSaveTool() {
     };
   }, [invalidatePageState, resetSession]);
 
+  useEffect(() => {
+    if (!active) return;
+    const forward = (command: PickerCommand) => sessionClose.current?.sendCommand(command);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        invalidatePageState('Selezione annullata.');
+        return;
+      }
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        event.stopPropagation();
+        forward('navigate-up');
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        event.stopPropagation();
+        forward('navigate-down');
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        forward('confirm');
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
+    return () => document.removeEventListener('keydown', onKey, true);
+  }, [active, invalidatePageState]);
+
   async function startPicker() {
-    if (busy) return;
     resetSession();
     setBusy(true);
+    setActive(true);
     setError(false);
     setFeedback('');
+    setCopyFallback('');
+    setPreviewOpen(false);
+    setSnapshot(null);
     setStatus('Avvio del selettore…');
     const gen = generation.current;
     try {
@@ -157,7 +188,6 @@ export function InspectSaveTool() {
       invalidatePageState('Selezione annullata.');
       return;
     }
-    setActive(true);
     await startPicker();
   }
 
@@ -212,16 +242,15 @@ export function InspectSaveTool() {
     }
   }
 
-  const actionLabel = active ? 'Clicca una sezione' : 'Ispeziona e salva';
+  const actionLabel = active ? 'Clicca una sezione' : 'Seleziona';
 
   return (
     <section className="inspect-tool" aria-label="Strumento ispeziona e salva">
-      <div className="section-heading">
+      <div className="section-heading inspect-heading">
         <h2>Ispeziona e salva</h2>
         <button
           type="button"
           className={active ? 'inspect-action is-active' : 'inspect-action'}
-          disabled={busy && !active}
           onClick={() => void togglePicker()}
         >
           <MousePointerClick aria-hidden="true" /> {actionLabel}
@@ -243,7 +272,7 @@ export function InspectSaveTool() {
       {feedback && <p className={`inspect-feedback ${error ? 'is-error' : ''}`} role="status">{feedback}</p>}
 
       {!snapshot && !busy && !status && (
-        <p className="inspect-empty">Premi Ispeziona e salva e clicca una sezione della pagina per analizzarla.</p>
+        <p className="inspect-empty">Premi Seleziona e clicca una sezione della pagina per analizzarla.</p>
       )}
 
       {snapshot && (
@@ -251,7 +280,7 @@ export function InspectSaveTool() {
           <div className="inspect-title-row">
             <h3>{snapshot.tagLabel}</h3>
             <div className="inspect-pills">
-              <span className="inspect-pill inspect-pill-wrap">{snapshot.selector}</span>
+              <span className="inspect-pill">{snapshot.selector}</span>
               <span className="inspect-pill">{snapshot.dimensions}</span>
             </div>
           </div>
@@ -274,19 +303,17 @@ export function InspectSaveTool() {
             <button type="button" className="inspect-action-primary" onClick={() => void copyMarkup()}>
               <Copy aria-hidden="true" /> Copia codice
             </button>
-            <div className="inspect-download-row">
-              <button type="button" disabled={!snapshot.png} onClick={() => void downloadPng()}>
-                <Download aria-hidden="true" /> Scarica immagine
-              </button>
-              <button type="button" onClick={() => void downloadMarkup()}>
-                <FileCode aria-hidden="true" /> Scarica codice
-              </button>
-            </div>
+            <button type="button" disabled={!snapshot.png} onClick={() => void downloadPng()}>
+              <Download aria-hidden="true" /> Scarica immagine
+            </button>
+            <button type="button" onClick={() => void downloadMarkup()}>
+              <FileCode aria-hidden="true" /> Scarica codice
+            </button>
           </div>
 
           {snapshot.clipped && (
             <p className="inspect-warning" role="status">
-              L&apos;anteprima PNG mostra solo la porzione visibile: l&apos;elemento era più grande del viewport o parzialmente fuori schermo.
+              L&apos;anteprima PNG potrebbe non mostrare tutto l&apos;elemento: contenitori con overflow nascosto, elementi fixed molto grandi o iframe non accessibili possono limitare la cattura.
             </p>
           )}
 

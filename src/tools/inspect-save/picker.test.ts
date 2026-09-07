@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { navigateDown, navigateUp, parentTarget } from './picker';
+import { navigateDown, navigateUp, parentTarget, shouldFollowPointer } from './picker';
 
 describe('picker navigation helpers', () => {
   it('walks up to the parent element', () => {
@@ -26,5 +26,13 @@ describe('picker navigation helpers', () => {
     const inner = document.createElement('p');
     shadow.append(inner);
     expect(parentTarget(inner)).toBe(host);
+  });
+});
+
+describe('shouldFollowPointer', () => {
+  it('keeps the expanded element until the mouse actually moves', () => {
+    expect(shouldFollowPointer(true, 40, 40, 41, 41)).toBe(false);
+    expect(shouldFollowPointer(true, 40, 40, 80, 80)).toBe(true);
+    expect(shouldFollowPointer(false, 40, 40, 40, 40)).toBe(true);
   });
 });

@@ -1,6 +1,6 @@
 import { browser, type Browser } from 'wxt/browser';
 import { captureElementPng } from './capture';
-import type { InspectSnapshot, SnapshotPayload } from './types';
+import type { InspectSnapshot, PickerCommand, SnapshotPayload } from './types';
 
 function isPayload(value: unknown): value is SnapshotPayload {
   if (!value || typeof value !== 'object') return false;
@@ -12,6 +12,11 @@ function isPayload(value: unknown): value is SnapshotPayload {
     && Array.isArray(item.sections);
 }
 
+export interface InspectSessionControl {
+  close(): void;
+  sendCommand(command: PickerCommand): void;
+}
+
 export async function startInspectSession(
   tabId: number,
   windowId: number,
@@ -19,7 +24,7 @@ export async function startInspectSession(
   onStatus: (status: string) => void,
   onResult: (result: InspectSnapshot) => void,
   onEnd: (reason: 'cancelled' | 'error' | 'disconnected') => void = () => {},
-) {
+): Promise<InspectSessionControl> {
   const [injection] = await browser.scripting.executeScript({ target: { tabId }, files: ['/inspect-save.js' as never] });
   signal.throwIfAborted();
   if (!injection?.documentId) throw new Error('Il documento non è più disponibile. Riprova.');
@@ -43,6 +48,27 @@ export async function startInspectSession(
     port.disconnect();
   };
   signal.addEventListener('abort', close, { once: true });
+  let isolateWait: { resolve(): void } | undefined;
+  function requestIsolation() {
+    return new Promise<void>((resolve, reject) => {
+      if (closed || signal.aborted) {
+        reject(new Error('Connessione alla pagina terminata. Riprova.'));
+        return;
+      }
+      const timer = setTimeout(() => {
+        isolateWait = undefined;
+        reject(new Error('Impossibile isolare l\'elemento per la cattura. Riprova.'));
+      }, 4000);
+      isolateWait = {
+        resolve() {
+          clearTimeout(timer);
+          isolateWait = undefined;
+          resolve();
+        },
+      };
+      port.postMessage({ type: 'isolate-capture', session });
+    });
+  }
   port.onDisconnect.addListener(() => {
     if (!closed) {
       close();
@@ -59,15 +85,24 @@ export async function startInspectSession(
       close();
       onStatus('Selezione annullata.');
       onEnd('cancelled');
+    } else if (message.type === 'isolated') {
+      isolateWait?.resolve();
     } else if (message.type === 'snapshot' && isPayload(message.payload)) {
       clearTimeout(timeout);
       void (async () => {
         try {
           onStatus('Cattura dell\'anteprima…');
-          const png = await captureElementPng(windowId, message.payload.rect);
+          await requestIsolation();
+          const capture = await captureElementPng(tabId, windowId, message.payload.rect);
+          port.postMessage({ type: 'restore-capture', session });
           close();
-          onResult({ ...message.payload, png });
+          onResult({
+            ...message.payload,
+            png: capture.png,
+            clipped: message.payload.clipped || capture.clipped,
+          });
         } catch (error) {
+          port.postMessage({ type: 'restore-capture', session });
           close();
           onStatus(error instanceof Error ? error.message : String(error));
           onEnd('error');
@@ -79,5 +114,10 @@ export async function startInspectSession(
       onEnd('error');
     }
   });
-  return { close };
+  return {
+    close,
+    sendCommand(command: PickerCommand) {
+      if (!closed && !signal.aborted) port.postMessage({ type: 'command', session, command });
+    },
+  };
 }
