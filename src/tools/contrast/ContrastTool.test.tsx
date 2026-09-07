@@ -50,6 +50,19 @@ beforeEach(async () => {
 });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); });
 
+it('paints the sample on a decorative swatch, not on the field chrome', () => {
+  const swatches = [...host.querySelectorAll<HTMLElement>('.contrast-field-swatch')];
+  expect(swatches).toHaveLength(2);
+  expect(swatches[0]!.style.backgroundColor.toLowerCase()).toMatch(/#000000|rgb\(0,\s*0,\s*0\)/i);
+  expect(swatches[1]!.style.backgroundColor.toLowerCase()).toMatch(/#ffffff|rgb\(255,\s*255,\s*255\)/i);
+  const textInner = host.querySelector('#contrast-text')!.parentElement as HTMLElement;
+  const copy = host.querySelector<HTMLButtonElement>('[aria-label="Copia il colore del testo"]');
+  expect(textInner.style.backgroundColor).toBe('');
+  expect(textInner.style.color).toBe('');
+  expect(copy!.style.color).toBe('');
+  expect(copy!.parentElement?.className).toBe('contrast-field-actions');
+});
+
 it('shows 21:1 Ottimo for the default black-on-white pair', () => {
   expect(host.textContent).toContain('21.0 : 1');
   expect(host.textContent).toContain('Ottimo');

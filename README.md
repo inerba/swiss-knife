@@ -4,7 +4,7 @@ Estensione Chrome MV3 con WXT, React e TypeScript. Un pannello laterale raccogli
 
 ## Impostazioni
 
-Il pulsante Impostazioni nel pannello apre una scheda dedicata. Qui puoi attivare gli strumenti con le checkbox e riordinarli trascinandoli o con i pulsanti di spostamento. Il catalogo mostra soltanto gli strumenti attivi; il menu **Ordina per** permette di usare l’ordine personalizzato o quello alfabetico e ricorda l’ultima scelta. Qui puoi anche controllare e revocare l’accesso globale facoltativo ai siti. Le preferenze restano locali al profilo Chrome tramite il permesso `storage`; non contengono dati delle pagine.
+Il pulsante Impostazioni nel pannello apre una scheda dedicata. L�interfaccia usa esclusivamente il tema chiaro, anche se Chrome o una vecchia preferenza erano impostati su scuro. Il design usa superfici bianche, accenti indaco, header traslucido, card da 16 px e controlli a pillola. Qui puoi attivare gli strumenti con gli interruttori e riordinarli trascinandoli o con i pulsanti di spostamento. Il catalogo mostra soltanto gli strumenti attivi; il menu **Ordina per** permette di usare l’ordine personalizzato o quello alfabetico e ricorda l’ultima scelta. Qui puoi anche controllare e revocare l’accesso globale facoltativo ai siti. Le preferenze restano locali al profilo Chrome tramite il permesso `storage`; non contengono dati delle pagine. Lo sfondo vale solo per il pannello e le impostazioni, non per le pagine visitate. Pulsanti e campi usano i token del pannello: in hover icone e testo restano sullo stesso contrasto, nel tema chiaro.
 
 ## Avvio e installazione
 
@@ -103,7 +103,7 @@ Usa un identificativo unico e importa `IconaLucide` da [`lucide-react`](https://
 3. Verificare apertura in nuova scheda e invalidazione al cambio scheda o navigazione, anche durante una scansione.
 4. Provare il consenso globale assente, accettato, negato e revocato. Passare tra due siti durante iframe, screenshot e selettore multimediale: nessuna operazione deve partire da sola e risultati/selettori precedenti devono sparire.
 5. Provare una pagina `chrome://`, il Web Store e un file locale: verificare i messaggi e che rimangano esclusi anche con l’accesso globale.
-5. Usare Tab, Invio e Spazio; verificare ritorno del focus al pulsante strumento, pannello stretto, zoom 200% e tema chiaro/scuro.
+5. Usare Tab, Invio e Spazio; verificare ritorno del focus al pulsante strumento, pannello stretto, zoom 200% e tema chiaro (anche con sistema scuro).
 
 I test automatici coprono la scansione e il ciclo di vita del pannello con API simulate; non sostituiscono i permessi e il comportamento nativo del pannello in Chrome.
 
@@ -111,6 +111,6 @@ Il test browser opzionale `scripts/browser-smoke.cjs` richiede Playwright e Chro
 
 Lo script storico `scripts/image-picker-smoke.cjs` prova la parte immagini in un browser locale. Non eseguirlo quando è richiesta una verifica esclusivamente via CDP sulla scheda collegata.
 
-Verifica manuale immagini: provare sfondi multipli, pseudo-elementi, `picture`, iframe same-origin/cross-origin, shadow DOM, URL `data:`/`blob:`, autorizzazioni negate e accettate, file protetti o non disponibili, annullamento download e navigazione durante il recupero. Controllare anteprime, nomi e peso dei file salvati, tema chiaro/scuro, larghezza 320 px e tastiera.
+Verifica manuale immagini: provare sfondi multipli, pseudo-elementi, `picture`, iframe same-origin/cross-origin, shadow DOM, URL `data:`/`blob:`, autorizzazioni negate e accettate, file protetti o non disponibili, annullamento download e navigazione durante il recupero. Controllare anteprime, nomi e peso dei file salvati, tema chiaro (anche con sistema scuro), larghezza 320 px e tastiera.
 
 Prova reale eseguita il 6 settembre 2026 via CDP nella scheda Chrome Almo Nature già aperta, senza avviare browser locali: selezione del carosello tramite ↑ e Invio, tre video distinti trovati (anche nelle slide fuori vista), con risoluzione 1920 × 1080 e durata dalla pagina; clic su contenitore temporaneo con due immagini, audio e video, tutti raccolti; il clic non raggiunge la pagina; Esc annulla e rimuove il mirino. Fixture e codice di prova sono stati rimossi al termine. Il bundle di prova `scripts/media-picker-cdp-entry.ts` importa il selettore di produzione e lo esegue in un isolated world della scheda: verifica il selettore reale e il DOM reale, non il gesto `activeTab`, i dialoghi dei permessi, i download o il pannello nativo dell’estensione.

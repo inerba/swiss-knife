@@ -28,22 +28,11 @@ function isValidColorInput(value: string) {
   catch { return false; }
 }
 
-function readableOn(color: string) {
-  try {
-    const sample = parseColor(color);
-    const onWhite = sample.contrast('#ffffff', 'WCAG21');
-    const onBlack = sample.contrast('#000000', 'WCAG21');
-    return onWhite >= onBlack ? '#ffffff' : '#000000';
-  } catch {
-    return 'CanvasText';
-  }
-}
-
 function fieldStyle(value: string) {
   if (!isValidColorInput(value)) return undefined;
   try {
     const hex = displayHex(parseColor(value));
-    return { backgroundColor: hex, color: readableOn(hex), borderColor: hex };
+    return { backgroundColor: hex, borderColor: hex };
   } catch {
     return undefined;
   }
@@ -262,7 +251,8 @@ export function ContrastTool() {
           const block = (
             <div key={field} className="contrast-field">
               <label htmlFor={`contrast-${field}`}>{field === 'text' ? 'Testo' : 'Sfondo'}</label>
-              <div className="contrast-field-inner" style={style}>
+              <div className="contrast-field-inner">
+                {style && <span className="contrast-field-swatch" style={style} aria-hidden="true" />}
                 <input
                   id={`contrast-${field}`}
                   aria-label={fieldLabel(field)}

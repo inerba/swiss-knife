@@ -31,7 +31,7 @@ beforeEach(async () => {
   host = document.createElement('div'); document.body.append(host); root = createRoot(host);
   await act(async () => root.render(<App />));
 });
-afterEach(async () => { await act(async () => root.unmount()); host.remove(); });
+afterEach(async () => { await act(async () => root.unmount()); host.remove(); document.documentElement.style.removeProperty('color-scheme'); delete document.documentElement.dataset.theme; });
 it('lists Contrasti in the catalog', () => {
   const names = [...host.querySelectorAll('.tool-card strong')].map(node => node.textContent);
   expect(names).toContain('Contrasti');
