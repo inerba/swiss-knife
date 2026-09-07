@@ -161,6 +161,7 @@ select { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-r
 .global-access-notice h2, .access-settings h2 { font-size: 1rem; }
 .global-access-notice p, .access-settings p { margin: 6px 0 12px; }
 .global-access-notice button, .access-settings button { border-color: var(--accent); }
+.access-status:empty { display: none; }
 .access-status { min-block-size: 1.5lh; color: var(--muted); font-size: .85rem; }
 .access-settings { grid-template-columns: 1fr; border-color: var(--line); background: var(--bg); }
 .access-settings .section-heading { align-items: start; }

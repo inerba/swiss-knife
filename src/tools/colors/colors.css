@@ -20,7 +20,7 @@
 .colors-tool :is(input, select, textarea, button, summary):focus-visible { outline: 2px solid var(--colors-primary); outline-offset: 3px; }
 .colors-heading h2 { font-size: 18px; letter-spacing: -.02em; }
 .colors-heading p { margin-top: 3px; color: var(--muted); font-size: .92rem; }
-.colors-acquire { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.colors-acquire { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
 .colors-acquire button { justify-content: start; gap: 10px; text-align: start; padding: 11px; border-color: var(--line); }
 .colors-acquire button > svg { color: var(--accent); width: 20px; height: 20px; }
 .colors-acquire button span { font-weight: 600; }

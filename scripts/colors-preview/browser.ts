@@ -4,9 +4,11 @@ const stored: Record<string, unknown> = {
 };
 const event = () => ({ addListener() {}, removeListener() {} });
 export const browser = {
+  runtime: { async openOptionsPage() { window.alert('Usa Vista anteprima per aprire le impostazioni.'); } },
+  permissions: { async contains() { return false; }, async request() { return false; }, async remove() { return true; }, async getAll() { return { origins: [] }; }, onAdded: event(), onRemoved: event() },
   storage: {
     local: {
-      async get(key: string) { return { [key]: stored[key] }; },
+      async get(key: string | string[]) { return Object.fromEntries((Array.isArray(key) ? key : [key]).map(k => [k, stored[k]])); },
       async set(values: Record<string, unknown>) { Object.assign(stored, values); for (const listener of listeners) listener(Object.fromEntries(Object.entries(values).map(([key, newValue]) => [key, { newValue }])), 'local'); },
       async remove(key: string) { delete stored[key]; for (const listener of listeners) listener({ [key]: { newValue: undefined } }, 'local'); },
     },
