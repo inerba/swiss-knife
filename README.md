@@ -1,5 +1,7 @@
 # Swiss Knife
 
+![Swiss Knife: 12 strumenti per la pagina che stai visitando, nel pannello laterale di Chrome](docs/banner.png)
+
 Swiss Knife raccoglie **12 strumenti per lavorare sulle pagine web** in un unico pannello laterale: cattura immagini e screenshot, ispeziona elementi, controlla colori e contrasti, compila form di prova e genera contenuti da copiare.
 
 L’interfaccia è in italiano, con tema chiaro e un catalogo personalizzabile. Gli strumenti di conversione e generazione lavorano localmente; quelli che analizzano la pagina operano su richiesta.
