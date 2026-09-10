@@ -35,12 +35,13 @@ interface EmojiSource {
 const groups: Record<number, EmojiGroup | undefined> = {
   0: 'smileys-emotion',
   1: 'people-body',
-  2: 'animals-nature',
-  3: 'food-drink',
-  4: 'travel-places',
-  5: 'activities',
-  6: 'objects',
-  7: 'symbols',
+  // Emojibase group 2 contains standalone skin/hair components, not a category.
+  3: 'animals-nature',
+  4: 'food-drink',
+  5: 'travel-places',
+  6: 'activities',
+  7: 'objects',
+  8: 'symbols',
   9: 'flags',
 };
 

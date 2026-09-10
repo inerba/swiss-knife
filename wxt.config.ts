@@ -3,6 +3,12 @@ import { defineConfig } from 'wxt';
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
+  vite: () => ({
+    build: {
+      // Chrome cannot reuse these extension preloads across execution worlds.
+      modulePreload: false,
+    },
+  }),
   manifest: {
     name: 'Swiss Knife',
     minimum_chrome_version: '123',
