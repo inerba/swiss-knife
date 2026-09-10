@@ -123,8 +123,7 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) { button { transition: none; } }
 .brand { display: flex; align-items: center; gap: 12px; padding: 22px 18px; border-bottom: 1px solid var(--line); }
 .brand-icon { background: var(--accent); color: var(--on-accent); border-radius: 12px; inline-size: 44px; block-size: 44px; display: grid; place-items: center; flex-shrink: 0; }
-.brand-icon svg { inline-size: 25px; block-size: 25px; fill: currentColor; stroke: currentColor; transform: rotate(90deg); }
-.brand-icon path { fill: currentColor; }
+.brand-icon svg { inline-size: 25px; block-size: 25px; fill: none; stroke: currentColor; transform: rotate(90deg); }
 h1 { font-size: 1.25rem; letter-spacing: -.04em; margin: 0; }
 .brand p { font-size: .8rem; color: var(--muted); margin: 2px 0 0; }
 .version { margin-left: auto; font-size: .75rem; color: var(--muted); }
@@ -206,8 +205,7 @@ select { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-r
 html { scroll-padding-block: 90px 20px; }
 .brand { position: sticky; top: 0; z-index: 5; gap: 10px; padding: 10px 16px; background: rgba(255,255,255,.72); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: .5px solid var(--line); }
 .brand-icon { background: var(--accent); color: var(--on-accent); width: 36px; height: 36px; border-radius: 11px; }
-.brand-icon svg { width: 23px; height: 23px; fill: currentColor; stroke: currentColor; transform: rotate(90deg); }
-.brand-icon path { fill: currentColor; }
+.brand-icon svg { width: 23px; height: 23px; fill: none; stroke: currentColor; transform: rotate(90deg); }
 h1 { font-size: 18px; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; }
 h2 { font-size: 16px; font-weight: 650; line-height: 1.25; letter-spacing: -.01em; }
 h3 { font-size: 14px; font-weight: 600; }

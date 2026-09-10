@@ -67,7 +67,7 @@ it('opens a tool, scans and opens the source in an active tab', async () => {
 it('renders compact tool cards with Lucide icons and no redundant action label', () => {
   const brand = host.querySelector('.brand-icon > svg.lucide-pocket-knife');
   expect(brand).not.toBeNull();
-  expect(brand?.getAttribute('fill')).toBe('currentColor');
+  expect(brand?.getAttribute('fill')).toBe('none');
   const card = host.querySelector<HTMLButtonElement>('.tool-card');
   expect(card).not.toBeNull();
   expect(card!.querySelector('.tool-icon > svg')).not.toBeNull();

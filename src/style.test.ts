@@ -25,11 +25,11 @@ it('strips the native fieldset groove that reads as a black rim', () => {
   expect(css).toMatch(/fieldset\s*\{[^}]*border:\s*0/s);
 });
 
-it('uses a filled indigo brand mark in the panel', () => {
+it('uses an outlined indigo brand mark in the panel', () => {
   expect(css).toMatch(/\.brand-icon\s*\{[^}]*background:\s*var\(--accent\)/s);
   expect(css).toMatch(/\.brand-icon\s*\{[^}]*color:\s*var\(--on-accent\)/s);
   expect(css).not.toMatch(/\.brand-icon\s*\{[^}]*background:\s*#a93728/s);
-  expect(css).toMatch(/\.brand-icon svg\s*\{[^}]*fill:\s*currentColor/s);
-  expect(css).toMatch(/\.brand-icon path\s*\{[^}]*fill:\s*currentColor/s);
+  expect(css).toMatch(/\.brand-icon svg\s*\{[^}]*fill:\s*none/s);
+  expect(css).not.toMatch(/\.brand-icon path\s*\{[^}]*fill:\s*currentColor/s);
   expect(css).toMatch(/\.brand-icon svg\s*\{[^}]*transform:\s*rotate\(90deg\)/s);
 });
