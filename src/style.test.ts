@@ -21,11 +21,15 @@ it('keeps the interface light regardless of system preference', () => {
   expect(css).not.toMatch(/prefers-color-scheme|data-theme="dark"|light-dark\(/);
 });
 
-it('uses a high-contrast foreground for the emoji copy toast', () => {
-  expect(css).toMatch(/\.emoji-copy-toast\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--fg\) 88%, transparent\)[^}]*color:\s*var\(--on-accent\)/s);
+it('strips the native fieldset groove that reads as a black rim', () => {
+  expect(css).toMatch(/fieldset\s*\{[^}]*border:\s*0/s);
 });
 
-it('grows emoji grid cells together with the selected preview size', () => {
-  expect(css).toMatch(/\.emoji-grid\s*\{[^}]*minmax\(var\(--emoji-cell-size\), 1fr\)[^}]*gap:\s*6px/s);
-  expect(css).toMatch(/\.emoji-preview-60\s*\{[^}]*--emoji-preview-size:\s*60px/s);
+it('uses a filled indigo brand mark in the panel', () => {
+  expect(css).toMatch(/\.brand-icon\s*\{[^}]*background:\s*var\(--accent\)/s);
+  expect(css).toMatch(/\.brand-icon\s*\{[^}]*color:\s*var\(--on-accent\)/s);
+  expect(css).not.toMatch(/\.brand-icon\s*\{[^}]*background:\s*#a93728/s);
+  expect(css).toMatch(/\.brand-icon svg\s*\{[^}]*fill:\s*currentColor/s);
+  expect(css).toMatch(/\.brand-icon path\s*\{[^}]*fill:\s*currentColor/s);
+  expect(css).toMatch(/\.brand-icon svg\s*\{[^}]*transform:\s*rotate\(90deg\)/s);
 });

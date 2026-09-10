@@ -1,0 +1,126 @@
+.qr-tool { display: grid; gap: 12px; }
+.qr-tool .section-heading svg { width: 21px; height: 21px; color: var(--accent); }
+.qr-create, .qr-read, .qr-acc-body, .qr-read-result, .qr-preset-bar { display: grid; gap: 10px; }
+.qr-tool label { display: grid; gap: 4px; margin-top: 0; font-weight: 500; }
+.qr-tool input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]),
+.qr-tool select,
+.qr-tool textarea { width: 100%; }
+.qr-tool textarea { min-height: 70px; resize: vertical; font-family: var(--font-mono); font-size: 12px; }
+.qr-tool input[type="color"] { padding: 3px; height: 36px; }
+.qr-tool input[type="range"] { padding: 0; accent-color: var(--accent); }
+.qr-tool input[type="file"] { padding: 6px; }
+.qr-field-grid { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.qr-color-fields { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.qr-check { display: flex !important; align-items: center; gap: 8px !important; font-weight: 500 !important; }
+.qr-check input { width: auto; min-height: 0; }
+
+.qr-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--ui-border-muted);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .05);
+}
+.qr-tabs button {
+  min-height: 28px;
+  padding: 4px;
+  border-radius: 999px;
+  font-size: 12px;
+  box-shadow: none;
+  background: transparent;
+  border-color: transparent;
+  color: var(--ui-text-toned);
+}
+.qr-tabs button[aria-selected="true"] {
+  background: #ffffff;
+  color: var(--fg);
+  border-color: transparent;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+}
+.qr-tabs button:hover:not(:disabled):not([aria-selected="true"]) {
+  color: var(--fg);
+  background: transparent;
+  border-color: transparent;
+}
+.qr-tabs button[aria-selected="true"]:hover:not(:disabled) {
+  background: #ffffff;
+  color: var(--fg);
+  border-color: transparent;
+}
+
+.qr-preset-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: end; }
+.qr-preset-name { flex: 1 1 140px; }
+
+.qr-style-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--ios-card-radius);
+  background: var(--bg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.qr-acc { margin: 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: transparent; }
+.qr-acc:first-child { border-top: 0; }
+.qr-acc summary {
+  cursor: pointer;
+  min-height: 32px;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--muted);
+}
+.qr-acc summary:focus-visible { outline: 3px solid var(--ios-accent-glow); outline-offset: 2px; }
+.qr-acc-body { padding: 0 12px 12px; }
+
+.qr-preview {
+  margin-bottom: 0;
+  padding: 16px;
+  border-radius: var(--ios-card-radius);
+  box-shadow: var(--shadow-card);
+}
+.qr-preview img { max-height: 220px; background: transparent; }
+.qr-actions { display: grid; gap: 8px; }
+.qr-export-actions {
+  display: flex;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: var(--shadow-hover);
+}
+.qr-export-actions button {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.qr-export-actions button + button { border-left: 1px solid rgba(0, 0, 0, .10); }
+.qr-upload, .qr-paste {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px dashed var(--line);
+  border-radius: var(--ios-card-radius);
+  cursor: pointer;
+  font-weight: 600;
+}
+.qr-upload input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.qr-paste:focus-visible { outline: 3px solid var(--ios-accent-glow); outline-offset: 2px; }
+.qr-read-result {
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--ios-card-radius);
+  box-shadow: var(--shadow-card);
+}
+@media (max-width: 350px) { .qr-field-grid, .qr-color-fields { grid-template-columns: 1fr; } }

@@ -2,23 +2,27 @@
   "name": "swiss-knife",
   "description": "Piccoli strumenti per la pagina che stai visitando.",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "node --no-experimental-webstorage node_modules/wxt/bin/wxt.mjs",
     "build": "node --no-experimental-webstorage node_modules/wxt/bin/wxt.mjs build",
-    "zip": "node --no-experimental-webstorage node_modules/wxt/bin/wxt.mjs zip",
+    "zip": "node scripts/zip.cjs",
     "test": "vitest run",
     "compile": "tsc --noEmit",
     "postinstall": "node --no-experimental-webstorage node_modules/wxt/bin/wxt.mjs prepare"
   },
   "dependencies": {
     "@faker-js/faker": "^10.6.0",
+    "@noble/hashes": "2.4.0",
     "colorjs.io": "^0.7.1",
     "emojibase-data": "17.0.0",
+    "jsqr": "^1.4.0",
     "lucide-react": "^1.41.0",
+    "qr-code-styling": "^1.9.2",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "sm-crypto": "0.5.7"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",

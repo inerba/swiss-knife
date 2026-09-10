@@ -1,6 +1,6 @@
 # Swiss Knife
 
-Estensione Chrome MV3 con WXT, React e TypeScript. Un pannello laterale raccoglie strumenti indipendenti: **Lorem Ipsum**, **Compila form**, **Elenca iframe**, **Cattura file multimediali**, **Screenshot**, **Colori**, **Contrasti**, **Ispeziona e salva** ed **Emoji**.
+Estensione Chrome MV3 con WXT, React e TypeScript. Un pannello laterale raccoglie strumenti indipendenti: **Lorem Ipsum**, **Compila form**, **Elenca iframe**, **Cattura file multimediali**, **Screenshot**, **Colori**, **Contrasti**, **Ispeziona e salva**, **Emoji**, **QR code**, **Codifica e converti** e **Generatore password**.
 
 ## Emoji
 
@@ -23,7 +23,9 @@ pnpm build
 pnpm zip
 ```
 
-Per installare la build, apri `chrome://extensions`, abilita **Modalit� sviluppatore**, scegli **Carica estensione non pacchettizzata** e seleziona `.output/chrome-mv3`. Per lo sviluppo con `pnpm dev`, la cartella � `.output/chrome-mv3-dev`. Lo ZIP di produzione viene generato in `.output`.
+`pnpm zip` chiede la versione (predefinita: quella in `package.json`) e genera lo ZIP installabile in `.output`, ad esempio `swiss-knife-1.2.0-chrome.zip`. Puoi passarla direttamente: `pnpm zip -- 1.2.0`. La versione aggiorna `package.json` e il manifest, ed è quella mostrata nell’header del pannello.
+
+Per installare la build, apri `chrome://extensions`, abilita **Modalità sviluppatore**, scegli **Carica estensione non pacchettizzata** e seleziona `.output/chrome-mv3`. Per lo sviluppo con `pnpm dev`, la cartella è `.output/chrome-mv3-dev`. Lo ZIP di produzione viene generato in `.output`.
 
 Apri una pagina HTTP/HTTPS e scegli **Elenca iframe**. Al primo utilizzo il pannello propone **Abilita su tutti i siti**: dopo il consenso Chrome, gli strumenti restano disponibili passando a un?altra pagina o scheda, senza avviare scansioni automaticamente. Il cambio scheda elimina risultati, operazioni e selettori della pagina precedente; il pannello mantiene lo strumento selezionato e invita ad avviarlo sulla pagina nuova. **Apri** attiva una nuova scheda.
 
@@ -54,6 +56,28 @@ Le catture non inviano dati a servizi esterni e usano il download nativo di Chro
 **Colori** raccoglie un singolo pixel con il contagocce di Chrome, genera la palette di tutta la pagina con **Genera Palette** oppure estrae la palette degli stili di un elemento scelto con **Da elemento**. La selezione include testo, sfondi, bordi, ombre, gradienti, pseudo-elementi e SVG visibili, ma non analizza i pixel di immagini, video o canvas. Le pagine o iframe che Chrome non pu� ispezionare restano esclusi.
 
 Il modulo converte HEX, RGB, HSL, OKLab, OKLCH e Display P3, mostra il colore Tailwind CSS 4 pi� vicino e include la palette Tailwind nella build. La cronologia locale conserva gli ultimi 50 colori senza URL n� contenuti della pagina; i duplicati risalgono in cima. Puoi rimuovere i singoli campioni, eliminare quelli selezionati o svuotare tutta la cronologia. Le palette estratte restano temporanee finch� non scegli **Salva selezionati**. La cronologia pu� essere esportata come codici, variabili CSS o classi Tailwind e copiata negli appunti.
+
+## Codifica e converti
+
+Incolla un valore in **Input**, scegli **Da** e **A**, quindi premi **Converti**. Sono disponibili Testo UTF-8, Base64 standard, URL encoded, Unicode escaped, HEX e Binario. **Inverti formati** scambia soltanto i selettori. **Copia** copia il risultato; **Usa come input** lo trasferisce nel campo iniziale e imposta la conversione dal suo formato verso il testo (verso Base64 se è già testo), senza eseguirla. Puoi poi scegliere un'altra destinazione, ad esempio Base64 → HEX. JSON, spazi e ritorni a capo sono trattati come testo e non vengono riformattati.
+
+Le conversioni passano dai byte: Base64, HEX e Binario possono rappresentare anche dati non UTF-8. La destinazione testo o Unicode escaped richiede invece UTF-8 valido. HEX accetta coppie di cifre con spazi ASCII e produce una stringa minuscola senza `0x`; Binario accetta gruppi multipli di otto bit e produce byte separati da spazi. Base64 accetta spazi ASCII e padding omesso se ricostruibile, ma rifiuta valori non canonici e Base64url. URL encoded usa `%20` per gli spazi e mantiene `+` letterale in lettura; `%HH` rappresenta un byte. Unicode escaped produce `\uXXXX` (coppie surrogate per emoji) e accetta anche testo misto, `\u{...}` ed escape JSON standard.
+
+La modalità **Hash** genera MD5, SHA-256, SHA-512 o SM3 in HEX minuscolo, sul contenuto esatto dell'Input come testo UTF-8, senza decodifica implicita. È possibile elaborare anche una stringa vuota. Gli errori sono inline e non cancellano l'input. Modificare input, modalità o parametri invalida il risultato precedente. Il suggerimento di formato appare soltanto per contenuti riconoscibili e leggibili, fino a 64 KiB, e prepara una conversione in testo senza avviarla.
+
+Tutto avviene localmente, senza rete, logging, analytics o cronologia. Input e risultato restano nella memoria del componente; cambiare scheda Chrome li conserva, uscire dalla utility o chiudere il pannello li elimina. Non vengono letti dati della pagina e non sono richiesti nuovi permessi. **Incolla** legge gli appunti soltanto al clic: se Chrome lo impedisce, usa **Ctrl+V** nel campo Input. In caso di copia negata, il risultato rimane selezionabile manualmente.
+
+## Generatore password
+
+**Generatore password** crea password nel browser con `crypto.getRandomValues()`, senza `Math.random()` e senza inviarle a server esterni. All’apertura è già presente una password di 16 caratteri; lunghezza, gruppi (numeri, minuscole, maiuscole, simboli) e regole si aggiornano dal vivo, anche mentre regoli lo slider. Nella riga **Simboli** puoi modificare l’alfabeto usato (di fabbrica `!@#$%^&*()-_=+[]{};:,.<>?`); un set vuoto con i simboli attivi mostra un errore inline. L’ingranaggio apre **Impostazioni generatore**, con le stesse opzioni del pannello; **Ripristina valori predefiniti** torna ai valori di fabbrica, incluso il set di simboli. **Genera** estrae un nuovo valore con le stesse opzioni; **Copia** copia quello mostrato, anche se è nascosto, e non rigenera. Puoi escludere caratteri simili (`o O 0 i I l 1`), sequenze evidenti (`abc`, `123` e analoghe anche all’indietro) e ripetizioni, oppure imporre che la password inizi con una lettera. Se la combinazione è impossibile (nessun gruppo, lunghezza troppo corta, regole troppo strette) compare un errore inline e **Copia** resta disabilitato. La robustezza (Debole, Media, Buona, Robusta) valuta la stringa effettiva. Restano in `storage` solo le opzioni, mai la password: uscire dallo strumento la elimina. Non legge la pagina e non richiede nuovi permessi. Lunghezza da 4 a 64 caratteri.
+
+## QR code
+
+**QR code** crea codici QR statici per URL, testo, Wi-Fi, contatti vCard, email, telefono e SMS. Nella scheda **Crea** puoi scegliere forma e colore dei moduli, degli angoli e dello sfondo (colore unico o gradiente), la dimensione, il margine e il livello di correzione errori. I preset **Classico**, **Arrotondato**, **Extra arrotondato**, **Classy** e **Punti** partono da stili predefiniti. **Salva preset** compare solo se lo stile attuale non coincide con un preset predefinito o già salvato: logo e contenuto del QR non entrano nel confronto. Il logo PNG, JPEG o SVG resta solo nella sessione corrente e non entra nei preset: con un logo la correzione errori passa ad **Alto**.
+
+L’anteprima si aggiorna mentre scrivi: PNG, SVG e copia sono disponibili appena il QR è generato. Lo sfondo può essere trasparente. Nessun QR viene inviato a servizi esterni.
+
+Nella scheda **Leggi**, **Ispeziona QR nella pagina** mostra un mirino: punta un QR visibile, clicca per acquisirlo, usa ↑ per ampliare la selezione, ↓ per tornare al livello precedente ed Esc per annullare. La lettura usa i pixel dell’elemento selezionato, quindi include immagini, SVG e canvas visibili; il QR deve essere completamente visibile e non coperto. Puoi anche caricare PNG, JPEG o SVG oppure incollare un’immagine con Ctrl+V. Il risultato resta temporaneo nel pannello: puoi copiarlo e aprire esplicitamente solo gli URL HTTP(S). Nessun QR, immagine o contenuto letto viene inviato a servizi esterni o salvato in modo permanente.
 
 ## Contrasti
 

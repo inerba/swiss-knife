@@ -6,7 +6,7 @@ import { App } from './App';
 const api = vi.hoisted(() => {
   const event = () => ({ addListener: vi.fn(), removeListener: vi.fn() });
   return { tabs: { query: vi.fn(), create: vi.fn(), onActivated: event(), onUpdated: event(), onRemoved: event() },
-    windows: { getCurrent: vi.fn() }, scripting: { executeScript: vi.fn() }, runtime: { openOptionsPage: vi.fn() },
+    windows: { getCurrent: vi.fn() }, scripting: { executeScript: vi.fn() }, runtime: { openOptionsPage: vi.fn(), getManifest: vi.fn(() => ({ version: '1.1.0' })) },
     permissions: { contains: vi.fn(), request: vi.fn(), remove: vi.fn(), onAdded: event(), onRemoved: event() },
     storage: { local: { get: vi.fn(), set: vi.fn() }, onChanged: event() } };
 });
@@ -35,6 +35,12 @@ afterEach(async () => { await act(async () => root.unmount()); host.remove(); do
 it('lists Contrasti in the catalog', () => {
   const names = [...host.querySelectorAll('.tool-card strong')].map(node => node.textContent);
   expect(names).toContain('Contrasti');
+  expect(host.querySelector('.version')?.textContent).toBe('1.1.0');
+});
+it('lists Generatore password in the catalog', () => {
+  const names = [...host.querySelectorAll('.tool-card strong')].map(node => node.textContent);
+  expect(names).toContain('Generatore password');
+  expect(host.querySelectorAll('#tool-password-generator')).toHaveLength(1);
 });
 it('keeps catalog controls hidden until the filter and sort button is activated', async () => {
   const catalogControls = host.querySelector<HTMLDivElement>('#catalog-controls')!;
@@ -59,13 +65,33 @@ it('opens a tool, scans and opens the source in an active tab', async () => {
   expect(api.tabs.onActivated.removeListener).toHaveBeenCalled();
 });
 it('renders compact tool cards with Lucide icons and no redundant action label', () => {
-  expect(host.querySelector('.brand-icon > svg.lucide-pocket-knife')).not.toBeNull();
+  const brand = host.querySelector('.brand-icon > svg.lucide-pocket-knife');
+  expect(brand).not.toBeNull();
+  expect(brand?.getAttribute('fill')).toBe('currentColor');
   const card = host.querySelector<HTMLButtonElement>('.tool-card');
   expect(card).not.toBeNull();
   expect(card!.querySelector('.tool-icon > svg')).not.toBeNull();
   expect(card!.querySelector('.tool-copy > strong')?.textContent).toBe('Elenca iframe');
   expect(card!.querySelector('.tool-copy > .muted')?.textContent).toContain('Trova i contenuti incorporati');
   expect(card!.textContent).not.toContain('Avvia strumento');
+});
+it('opens the local codec once and discards its input when leaving the tool', async () => {
+  expect(host.querySelectorAll('#tool-text-codec')).toHaveLength(1);
+  const writes = api.storage.local.set.mock.calls.length;
+  await click('Codifica e converti');
+  const input = host.querySelector<HTMLTextAreaElement>('#codec-input')!;
+  await act(async () => {
+    Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!.call(input, 'local only');
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  const convert = host.querySelector<HTMLButtonElement>('#codec-panel-convert .codec-submit')!;
+  await act(async () => convert.click());
+  expect(host.querySelector<HTMLTextAreaElement>('#codec-result')!.value).toBe('bG9jYWwgb25seQ==');
+  expect(api.scripting.executeScript).not.toHaveBeenCalled();
+  expect(api.tabs.query).not.toHaveBeenCalled();
+  expect(api.storage.local.set.mock.calls.length).toBe(writes);
+  await click('Tutti gli strumenti'); await click('Codifica e converti');
+  expect(host.querySelector<HTMLTextAreaElement>('#codec-input')!.value).toBe('');
 });
 it('invalidates results on activation and ignores other windows', async () => {
   await click('Elenca iframe');

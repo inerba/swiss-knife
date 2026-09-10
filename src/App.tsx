@@ -25,7 +25,7 @@ export function App() {
   useEffect(() => { if (selected && !tool) setSelected(null); }, [selected, tool]);
   const visible = active.filter(item => `${item.name} ${item.description}`.toLocaleLowerCase('it').includes(query.toLocaleLowerCase('it').trim())).sort((a, b) => catalogOrder === 'alphabetical' ? a.name.localeCompare(b.name, 'it') : 0);
   return <>
-    <header className="brand"><span className="brand-icon" aria-hidden="true"><PocketKnife /></span><div><h1>Swiss Knife</h1><p>Piccoli strumenti, a portata di clic.</p></div><button className="icon-button" aria-label="Apri impostazioni" onClick={() => void browser.runtime.openOptionsPage()}><Settings /></button><span className="version">1.1</span></header>
+    <header className="brand"><span className="brand-icon" aria-hidden="true"><PocketKnife fill="currentColor" /></span><div><h1>Swiss Knife</h1><p>Piccoli strumenti, a portata di clic.</p></div><button className="icon-button" aria-label="Apri impostazioni" onClick={() => void browser.runtime.openOptionsPage()}><Settings /></button><span className="version">{browser.runtime.getManifest().version}</span></header>
     <main>
       <GlobalSiteAccessNotice />
       {tool ? <>

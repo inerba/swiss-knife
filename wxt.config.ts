@@ -12,4 +12,8 @@ export default defineConfig({
     optional_host_permissions: ['<all_urls>'],
     action: { default_title: 'Apri Swiss Knife' },
   },
+  zip: {
+    artifactTemplate: '{{name}}-{{packageVersion}}-{{browser}}.zip',
+    zipSources: false,
+  },
 });

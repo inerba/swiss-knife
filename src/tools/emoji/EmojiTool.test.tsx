@@ -63,7 +63,7 @@ it('copies the selected skin variant and reports clipboard errors', async () => 
   expect(navigator.clipboard.writeText).toHaveBeenCalledWith('👋🏽');
   expect(host.querySelector('[role="status"]')?.textContent).toContain('Emoji copiata');
 
-  await act(async () => { vi.advanceTimersByTime(2_000); });
+  await act(async () => { vi.advanceTimersByTime(3_000); });
   expect(host.textContent).not.toContain('Emoji copiata');
 
   vi.mocked(navigator.clipboard.writeText).mockRejectedValueOnce(new Error('denied'));
@@ -86,6 +86,22 @@ it('uses the selected icon-only category filters with accessible names and toolt
     expect(button?.textContent).toBe('');
     expect(button?.querySelector('svg')?.getAttribute('class')).toContain(icon);
   });
+});
+
+it('closes settings with Escape and retries a failed catalog load', async () => {
+  const { loadEmojiData } = await import('./data');
+  const settings = host.querySelector<HTMLButtonElement>('[aria-label="Impostazioni emoji"]')!;
+  await act(async () => settings.click());
+  expect(host.querySelector('#emoji-settings-title')).not.toBeNull();
+  await act(async () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })));
+  expect(host.querySelector('#emoji-settings-title')).toBeNull();
+
+  vi.mocked(loadEmojiData).mockRejectedValueOnce(new Error('offline'));
+  await act(async () => { root.unmount(); root = createRoot(host); root.render(<EmojiTool />); await Promise.resolve(); });
+  expect(host.textContent).toContain('Impossibile caricare');
+  const retry = [...host.querySelectorAll('button')].find(button => button.textContent === 'Riprova')!;
+  await act(async () => { retry.click(); await Promise.resolve(); });
+  expect(host.querySelector('[aria-label="mano che saluta"]')).not.toBeNull();
 });
 
 it('offers five local preview sizes and exposes emoji as native text draggables', async () => {

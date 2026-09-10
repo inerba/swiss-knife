@@ -8,6 +8,9 @@ import { ColorsTool } from './colors/ColorsTool';
 import { ContrastTool } from './contrast/ContrastTool';
 import { InspectSaveTool } from './inspect-save/InspectSaveTool';
 import { EmojiTool } from './emoji/EmojiTool';
+import { QrCodeTool } from './qr-code/QrCodeTool';
+import { TextCodecTool } from './text-codec/TextCodecTool';
+import { PasswordGeneratorTool } from './password-generator/PasswordGeneratorTool';
 export const tools: ToolDefinition[] = [{
   id: 'iframes', name: 'Elenca iframe', icon: PanelsTopLeft,
   description: 'Trova i contenuti incorporati e apri il loro URL in una nuova scheda.',
@@ -44,5 +47,17 @@ export const tools: ToolDefinition[] = [{
   id: 'emoji', name: 'Emoji', icon: Smile,
   description: 'Cerca emoji in italiano o inglese e copiale negli appunti.',
   component: EmojiTool,
+}, {
+  id: 'qr-code', name: 'QR code', icon: QrCode,
+  description: 'Crea QR code personalizzati e leggi quelli nelle immagini o nella pagina.',
+  component: QrCodeTool,
+}, {
+  id: 'text-codec', name: 'Codifica e converti', icon: Binary,
+  description: 'Converti testo, Base64, HEX e altri formati; genera hash localmente.',
+  component: TextCodecTool,
+}, {
+  id: 'password-generator', name: 'Generatore password', icon: KeyRound,
+  description: 'Crea password sicure in pochi secondi.',
+  component: PasswordGeneratorTool,
 }];
-import { Camera, Contrast, FileText, FormInput, Palette, PanelsTopLeft, ScanEye, Smile, SquareDashedMousePointer } from 'lucide-react';
+import { Binary, Camera, Contrast, FileText, FormInput, KeyRound, Palette, PanelsTopLeft, QrCode, ScanEye, Smile, SquareDashedMousePointer } from 'lucide-react';
