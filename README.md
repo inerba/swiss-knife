@@ -38,26 +38,28 @@ Nelle **Impostazioni** puoi attivare o nascondere gli strumenti e modificarne l�
 
 ## Strumenti disponibili
 
+Gli strumenti sono elencati nell’ordine predefinito della prima installazione. Puoi personalizzarlo dalle impostazioni.
+
 | Strumento | Funzionalità |
 | --- | --- |
-| **Elenca iframe** | Elenca i contenuti incorporati nella pagina e apre gli URL accessibili in nuove schede. |
+| **Emoji** | Cerca emoji in italiano o inglese, le copia e consente di trascinarle nei campi compatibili. |
 | **Cattura file multimediali** | Seleziona un elemento e raccoglie immagini, video, audio e altre risorse al suo interno. |
-| **Screenshot** | Cattura la pagina intera, la parte visibile o un rettangolo selezionato. |
-| **Lorem Ipsum** | Genera da 1 a 100 paragrafi di testo segnaposto. |
-| **Compila form** | Riempie i campi selezionati con dati fittizi in italiano o inglese, senza inviare il modulo. |
 | **Colori** | Campiona colori, estrae palette e converte o esporta i codici. |
+| **QR code** | Crea QR personalizzati e legge quelli presenti in immagini o nella pagina. |
+| **Compila form** | Riempie i campi selezionati con dati fittizi in italiano o inglese, senza inviare il modulo. |
+| **Lorem Ipsum** | Genera da 1 a 100 paragrafi di testo segnaposto. |
+| **Screenshot** | Cattura la pagina intera, la parte visibile o un rettangolo selezionato. |
 | **Contrasti** | Calcola il rapporto di contrasto tra testo e sfondo e mostra gli esiti dei criteri WCAG 2.1. |
 | **Ispeziona e salva** | Mostra le proprietà di un elemento ed esporta un’anteprima PNG o uno snippet HTML e CSS. |
-| **Emoji** | Cerca emoji in italiano o inglese, le copia e consente di trascinarle nei campi compatibili. |
-| **QR code** | Crea QR personalizzati e legge quelli presenti in immagini o nella pagina. |
 | **Codifica e converti** | Converte testo e rappresentazioni di byte; calcola hash localmente. |
 | **Generatore password** | Genera password con lunghezza, caratteri e regole personalizzabili. |
+| **Elenca iframe** | Elenca i contenuti incorporati nella pagina e apre gli URL accessibili in nuove schede. |
 
-### Elenca iframe
+### Emoji
 
-Avvia la scansione per vedere gli iframe presenti nel documento, compresi quelli annidati accessibili. Ogni riga corrisponde a un elemento; il livello 0 indica un iframe nel documento principale. **Apri** porta il suo URL HTTP/HTTPS in una nuova scheda.
+Cerca per nome o parola chiave in italiano e inglese, filtra per categoria e scegli la tonalità della pelle per le emoji compatibili. Un clic copia la sequenza Unicode; puoi anche trascinarla nei normali campi testo e nelle aree modificabili della pagina.
 
-Gli iframe di un’altra origine possono essere elencati, ma il loro contenuto non accessibile non viene esplorato. Gli URL sono quelli dichiarati nella pagina e possono cambiare dopo un reindirizzamento. Iframe inline o senza un URL HTTP/HTTPS non hanno un collegamento apribile.
+Il catalogo Emojibase è incluso nell’estensione e non richiede connessione. Le impostazioni offrono cinque dimensioni di anteprima, da 22 a 60 px. Aspetto e disponibilità dei caratteri dipendono dal sistema operativo; editor complessi possono non accettare il trascinamento.
 
 ### Cattura file multimediali
 
@@ -69,17 +71,19 @@ Il recupero dei metadati può richiedere un’autorizzazione per l’origine del
 
 Non ricostruisce video da playlist HLS/DASH, dirette MediaSource o contenuti DRM. Canvas, gradienti e SVG inline senza file referenziati non vengono esportati da questo strumento. File temporanei, contenuti protetti e formati non supportati dal browser possono limitare anteprime e download.
 
-### Screenshot
+### Colori
 
-Scegli **Pagina intera**, **Schermata** o **Seleziona rettangolo**, quindi salva in PNG, JPEG o WebP oppure copia negli appunti. Se il browser non supporta la copia del formato scelto, usa PNG o scarica il file.
+Usa il contagocce per campionare un pixel, **Genera Palette** per raccogliere i colori della pagina oppure **Da elemento** per estrarli dagli stili di una selezione.
 
-Per la pagina intera puoi mantenere la larghezza corrente oppure impostarla tra 320 e 2560 px, anche tramite i preset Mobile e Desktop. La finestra viene ridimensionata temporaneamente per catturare il layout corrispondente e ripristinata al termine. La cattura scorre il documento e limita le ripetizioni degli elementi fissi.
+Sono disponibili HEX, RGB, HSL, OKLab, OKLCH e Display P3, oltre al colore Tailwind CSS 4 più vicino. La cronologia locale conserva fino a 50 colori e può essere copiata o esportata come codici, variabili CSS o classi Tailwind. Le palette estratte restano temporanee finché non scegli **Salva selezionati**.
 
-Pagine molto grandi possono superare i limiti del canvas del browser. In questi casi usa la schermata o un’area più piccola. La selezione rettangolare riguarda la porzione visibile e non scorre la pagina.
+L’estrazione dagli elementi legge gli stili, inclusi bordi, ombre e gradienti: non analizza i pixel di immagini, video o canvas.
 
-### Lorem Ipsum
+### QR code
 
-Scegli da 1 a 100 paragrafi e genera testo segnaposto. **Copia** genera un nuovo testo e lo copia negli appunti; il risultato rimane disponibile nell’area di testo anche quando la copia non è autorizzata.
+Crea QR statici per URL, testo, Wi-Fi, contatti vCard, email, telefono e SMS. Personalizza forme, colori, sfondo, margini e logo; salva lo stile come preset ed esporta in PNG o SVG. Il logo rimane nella sessione e non viene incluso nei preset.
+
+Nella scheda **Leggi** puoi caricare un’immagine PNG, JPEG o SVG, incollarla dagli appunti o selezionare un QR nella pagina. La lettura in pagina richiede che il codice sia interamente visibile e non coperto. Il risultato può essere copiato; gli URL HTTP/HTTPS vengono aperti solo su richiesta.
 
 ### Compila form
 
@@ -89,13 +93,17 @@ Le impostazioni permettono di preservare i campi già compilati, ignorare campi 
 
 Consensi e termini, CAPTCHA, campi nascosti, file, controlli disabilitati o di sola lettura e widget non nativi restano esclusi. I contenuti degli iframe non accessibili non possono essere compilati.
 
-### Colori
+### Lorem Ipsum
 
-Usa il contagocce per campionare un pixel, **Genera Palette** per raccogliere i colori della pagina oppure **Da elemento** per estrarli dagli stili di una selezione.
+Scegli da 1 a 100 paragrafi e genera testo segnaposto. **Copia** genera un nuovo testo e lo copia negli appunti; il risultato rimane disponibile nell’area di testo anche quando la copia non è autorizzata.
 
-Sono disponibili HEX, RGB, HSL, OKLab, OKLCH e Display P3, oltre al colore Tailwind CSS 4 più vicino. La cronologia locale conserva fino a 50 colori e può essere copiata o esportata come codici, variabili CSS o classi Tailwind. Le palette estratte restano temporanee finché non scegli **Salva selezionati**.
+### Screenshot
 
-L’estrazione dagli elementi legge gli stili, inclusi bordi, ombre e gradienti: non analizza i pixel di immagini, video o canvas.
+Scegli **Pagina intera**, **Schermata** o **Seleziona rettangolo**, quindi salva in PNG, JPEG o WebP oppure copia negli appunti. Se il browser non supporta la copia del formato scelto, usa PNG o scarica il file.
+
+Per la pagina intera puoi mantenere la larghezza corrente oppure impostarla tra 320 e 2560 px, anche tramite i preset Mobile e Desktop. La finestra viene ridimensionata temporaneamente per catturare il layout corrispondente e ripristinata al termine. La cattura scorre il documento e limita le ripetizioni degli elementi fissi.
+
+Pagine molto grandi possono superare i limiti del canvas del browser. In questi casi usa la schermata o un’area più piccola. La selezione rettangolare riguarda la porzione visibile e non scorre la pagina.
 
 ### Contrasti
 
@@ -111,18 +119,6 @@ La scheda **Info** mostra struttura, classi, tipografia, sfondo, bordi e layout.
 
 Lo snippet viene sanitizzato e conserva gli URL originali delle immagini: non è una copia autonoma dell’intera pagina. Overflow nascosto, elementi fissi e iframe non accessibili possono limitare la resa della cattura.
 
-### Emoji
-
-Cerca per nome o parola chiave in italiano e inglese, filtra per categoria e scegli la tonalità della pelle per le emoji compatibili. Un clic copia la sequenza Unicode; puoi anche trascinarla nei normali campi testo e nelle aree modificabili della pagina.
-
-Il catalogo Emojibase è incluso nell’estensione e non richiede connessione. Le impostazioni offrono cinque dimensioni di anteprima, da 22 a 60 px. Aspetto e disponibilità dei caratteri dipendono dal sistema operativo; editor complessi possono non accettare il trascinamento.
-
-### QR code
-
-Crea QR statici per URL, testo, Wi-Fi, contatti vCard, email, telefono e SMS. Personalizza forme, colori, sfondo, margini e logo; salva lo stile come preset ed esporta in PNG o SVG. Il logo rimane nella sessione e non viene incluso nei preset.
-
-Nella scheda **Leggi** puoi caricare un’immagine PNG, JPEG o SVG, incollarla dagli appunti o selezionare un QR nella pagina. La lettura in pagina richiede che il codice sia interamente visibile e non coperto. Il risultato può essere copiato; gli URL HTTP/HTTPS vengono aperti solo su richiesta.
-
 ### Codifica e converti
 
 Scegli i formati **Da** e **A** per convertire tra testo UTF-8, Base64 standard, URL encoded, Unicode escaped, HEX e binario. **Copia** copia il risultato; **Usa come input** lo prepara per una nuova conversione. Spazi, ritorni a capo e contenuti JSON non vengono riformattati.
@@ -136,6 +132,12 @@ La modalità **Hash** calcola MD5, SHA-256, SHA-512 o SM3 sul testo UTF-8 inseri
 Genera password da 4 a 64 caratteri usando `crypto.getRandomValues()`. Puoi scegliere numeri, maiuscole, minuscole e simboli, modificare l’insieme dei simboli ed escludere caratteri simili, sequenze o ripetizioni. È disponibile anche l’opzione per iniziare con una lettera.
 
 Le combinazioni impossibili producono un errore invece di un risultato incompleto. Vengono salvate soltanto le opzioni: le password generate non vengono conservate né inviate a server esterni.
+
+### Elenca iframe
+
+Avvia la scansione per vedere gli iframe presenti nel documento, compresi quelli annidati accessibili. Ogni riga corrisponde a un elemento; il livello 0 indica un iframe nel documento principale. **Apri** porta il suo URL HTTP/HTTPS in una nuova scheda.
+
+Gli iframe di un’altra origine possono essere elencati, ma il loro contenuto non accessibile non viene esplorato. Gli URL sono quelli dichiarati nella pagina e possono cambiare dopo un reindirizzamento. Iframe inline o senza un URL HTTP/HTTPS non hanno un collegamento apribile.
 
 ## Permessi e privacy
 

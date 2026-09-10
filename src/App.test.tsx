@@ -42,6 +42,14 @@ it('lists Generatore password in the catalog', () => {
   expect(names).toContain('Generatore password');
   expect(host.querySelectorAll('#tool-password-generator')).toHaveLength(1);
 });
+it('uses the requested default order on a fresh installation', () => {
+  const names = [...host.querySelectorAll('.tool-card strong')].map(node => node.textContent);
+  expect(names).toEqual([
+    'Emoji', 'Cattura file multimediali', 'Colori', 'QR code',
+    'Compila form', 'Lorem Ipsum', 'Screenshot', 'Contrasti',
+    'Ispeziona e salva', 'Codifica e converti', 'Generatore password', 'Elenca iframe',
+  ]);
+});
 it('keeps catalog controls hidden until the filter and sort button is activated', async () => {
   const catalogControls = host.querySelector<HTMLDivElement>('#catalog-controls')!;
   expect(catalogControls.hidden).toBe(true);
@@ -68,7 +76,7 @@ it('renders compact tool cards with Lucide icons and no redundant action label',
   const brand = host.querySelector('.brand-icon > svg.lucide-pocket-knife');
   expect(brand).not.toBeNull();
   expect(brand?.getAttribute('fill')).toBe('none');
-  const card = host.querySelector<HTMLButtonElement>('.tool-card');
+  const card = host.querySelector<HTMLButtonElement>('#tool-iframes');
   expect(card).not.toBeNull();
   expect(card!.querySelector('.tool-icon > svg')).not.toBeNull();
   expect(card!.querySelector('.tool-copy > strong')?.textContent).toBe('Elenca iframe');
