@@ -7,6 +7,7 @@ import { FormFillerTool } from './form-filler/FormFillerTool';
 import { ColorsTool } from './colors/ColorsTool';
 import { ContrastTool } from './contrast/ContrastTool';
 import { InspectSaveTool } from './inspect-save/InspectSaveTool';
+import { EmojiTool } from './emoji/EmojiTool';
 export const tools: ToolDefinition[] = [{
   id: 'iframes', name: 'Elenca iframe', icon: PanelsTopLeft,
   description: 'Trova i contenuti incorporati e apri il loro URL in una nuova scheda.',
@@ -39,5 +40,9 @@ export const tools: ToolDefinition[] = [{
   id: 'inspect-save', name: 'Ispeziona e salva', icon: SquareDashedMousePointer,
   description: 'Ispeziona una sezione, leggine le proprietà e copia o scarica codice e anteprima.',
   component: InspectSaveTool,
+}, {
+  id: 'emoji', name: 'Emoji', icon: Smile,
+  description: 'Cerca emoji in italiano o inglese e copiale negli appunti.',
+  component: EmojiTool,
 }];
-import { Camera, Contrast, FileText, FormInput, Palette, PanelsTopLeft, ScanEye, SquareDashedMousePointer } from 'lucide-react';
+import { Camera, Contrast, FileText, FormInput, Palette, PanelsTopLeft, ScanEye, Smile, SquareDashedMousePointer } from 'lucide-react';

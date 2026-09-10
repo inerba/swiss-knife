@@ -20,3 +20,12 @@ it('keeps the interface light regardless of system preference', () => {
   expect(css).toMatch(/color-scheme: light;/);
   expect(css).not.toMatch(/prefers-color-scheme|data-theme="dark"|light-dark\(/);
 });
+
+it('uses a high-contrast foreground for the emoji copy toast', () => {
+  expect(css).toMatch(/\.emoji-copy-toast\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--fg\) 88%, transparent\)[^}]*color:\s*var\(--on-accent\)/s);
+});
+
+it('grows emoji grid cells together with the selected preview size', () => {
+  expect(css).toMatch(/\.emoji-grid\s*\{[^}]*minmax\(var\(--emoji-cell-size\), 1fr\)[^}]*gap:\s*6px/s);
+  expect(css).toMatch(/\.emoji-preview-60\s*\{[^}]*--emoji-preview-size:\s*60px/s);
+});

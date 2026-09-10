@@ -1,6 +1,10 @@
 # Swiss Knife
 
-Estensione Chrome MV3 con WXT, React e TypeScript. Un pannello laterale raccoglie strumenti indipendenti: **Lorem Ipsum**, **Compila form**, **Elenca iframe**, **Cattura file multimediali**, **Screenshot**, **Colori**, **Contrasti** e **Ispeziona e salva**.
+Estensione Chrome MV3 con WXT, React e TypeScript. Un pannello laterale raccoglie strumenti indipendenti: **Lorem Ipsum**, **Compila form**, **Elenca iframe**, **Cattura file multimediali**, **Screenshot**, **Colori**, **Contrasti**, **Ispeziona e salva** ed **Emoji**.
+
+## Emoji
+
+**Emoji** mostra un catalogo locale di emoji native, diviso in categorie. Cerca per nome o parola chiave sia in italiano sia in inglese, scegli una tonalità della pelle per le emoji compatibili e fai clic su un elemento per copiarne la sequenza Unicode negli appunti. Il catalogo usa i dati [Emojibase](https://emojibase.dev/) (MIT), inclusi nella build: lo strumento non effettua richieste di rete e non legge la pagina aperta. L’aspetto e la disponibilità delle emoji più recenti dipendono dal sistema operativo.
 
 ## Impostazioni
 
@@ -74,6 +78,10 @@ Il cambio scheda o la navigazione invalidano selettore e snapshot; lo strumento 
 Con **Compila form** scegli English o Italiano e premi **Seleziona elemento**. Il mirino evidenzia il punto: clic o Invio compilano il contenitore, ? sceglie il padre, ? un discendente ed Esc annulla. Riconosce i controlli HTML nativi da tipo, autocomplete, etichetta e attributi; riempie dati fittizi coerenti per ciascun form e invia gli eventi input/change, senza inviare il form. Select, radio e checkbox comuni sono supportati; consensi e termini, CAPTCHA, campi nascosti, file, disabilitati, readonly e widget non nativi restano esclusi. I frame cross-origin non possono essere compilati.
 
 Le impostazioni dello strumento restano in locale: password prefissata (oppure una password casuale di 16 caratteri per form), parole da ignorare e opzione per preservare i campi gi� compilati. Non vengono conservati valori generati o dati delle pagine e non vengono contattati servizi esterni.
+
+## Emoji
+
+**Emoji** cerca nomi e parole chiave in italiano e inglese, filtra per categoria e tonalit� della pelle e copia la sequenza Unicode con un clic. Puoi anche trascinare un’emoji in normali campi testo, aree di testo e aree modificabili della pagina: editor complessi, campi non testuali e pagine Chrome o del Web Store possono rifiutare il rilascio. Le impostazioni dello strumento permettono di scegliere localmente una delle cinque dimensioni dell’anteprima (22, 32, 42, 52 o 60 px); 22 px � il valore iniziale. La griglia aumenta con l’anteprima e mantiene 6 px tra le emoji. Il sistema operativo decide l’aspetto e la disponibilit� delle emoji pi� recenti.
 
 ## Limiti e privacy
 
