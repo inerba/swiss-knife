@@ -199,6 +199,14 @@ public/               Risorse statiche incluse nella build
 scripts/              Packaging, icone e verifiche browser
 ```
 
+### Licenze di terze parti
+
+Le licenze, i copyright e le attribuzioni dei componenti distribuiti sono raccolti in [THIRD-PARTY-NOTICES.txt](public/THIRD-PARTY-NOTICES.txt). Il file comprende le librerie degli strumenti, le dipendenze runtime condivise, gli avvisi Feather inclusi da Lucide e i dati Tailwind e Unicode/CLDR. WXT copia il file dalla cartella `public` nella radice della build e dello ZIP installabile.
+
+Quando aggiungi, rimuovi o aggiorni una dipendenza o un dataset incorporato, aggiorna anche questo documento: controlla la versione effettivamente risolta nel lockfile e installata, gli import operativi e le dipendenze transitive incluse nella build. Conserva i testi completi dei file `LICENSE`, `LICENCE` e degli eventuali `NOTICE`, inclusi i copyright storici; per fonti esterne annota URL e data di consultazione. Se modifichi direttamente codice Apache-2.0, segnala le modifiche nei file interessati e conserva gli avvisi pertinenti.
+
+Prima di distribuire, genera lo ZIP con `pnpm zip -- 1.2.0` (sostituendo la versione quando necessario) e verifica che `THIRD-PARTY-NOTICES.txt` sia presente nella radice dell'archivio e identico a quello in `public`. La presenza delle licenze soltanto nel repository o in `node_modules` non sostituisce la loro inclusione nel pacchetto distribuito.
+
 ### Contributi e verifiche
 
 Per proporre una correzione o una funzionalità, apri una issue descrivendo il caso d’uso. Per i problemi indica browser e versione, versione dell’estensione, passaggi per riprodurre il comportamento ed eventuali messaggi di errore.
