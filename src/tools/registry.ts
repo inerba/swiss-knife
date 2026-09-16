@@ -11,6 +11,7 @@ import { EmojiTool } from './emoji/EmojiTool';
 import { QrCodeTool } from './qr-code/QrCodeTool';
 import { TextCodecTool } from './text-codec/TextCodecTool';
 import { PasswordGeneratorTool } from './password-generator/PasswordGeneratorTool';
+import { BrowserContextTool } from './browser-context/BrowserContextTool';
 export const tools: ToolDefinition[] = [{
   id: 'emoji', name: 'Emoji', icon: Smile,
   description: 'Cerca emoji in italiano o inglese e copiale negli appunti.',
@@ -59,5 +60,9 @@ export const tools: ToolDefinition[] = [{
   id: 'iframes', name: 'Elenca iframe', icon: PanelsTopLeft,
   description: 'Trova i contenuti incorporati e apri il loro URL in una nuova scheda.',
   component: IframeTool,
+}, {
+  id: 'browser-context', name: 'Browser context', icon: Crosshair,
+  description: 'Seleziona un elemento e copia HTML e CSS pronti per un agente AI.',
+  component: BrowserContextTool,
 }];
-import { Binary, Camera, Contrast, FileText, FormInput, KeyRound, Palette, PanelsTopLeft, QrCode, ScanEye, Smile, SquareDashedMousePointer } from 'lucide-react';
+import { Binary, Camera, Contrast, Crosshair, FileText, FormInput, KeyRound, Palette, PanelsTopLeft, QrCode, ScanEye, Smile, SquareDashedMousePointer } from 'lucide-react';
