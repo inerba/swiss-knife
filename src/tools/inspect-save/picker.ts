@@ -122,7 +122,7 @@ function detectCaptureLimitations(element: Element, view: Window) {
 
 
 
-function snapshotPayload(element: Element, view: Window): SnapshotPayload {
+export function inspectSnapshotPayload(element: Element, view: Window): SnapshotPayload {
 
   element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 
@@ -212,9 +212,11 @@ export interface InspectPickerControl {
 
 
 
-export function installInspectPicker(
+export function installInspectPicker<T>(
 
-  onPick: (payload: SnapshotPayload, element: Element) => void,
+  buildPayload: (element: Element, view: Window) => T,
+
+  onPick: (payload: T, element: Element) => void,
 
   onCancel: () => void,
 
@@ -861,7 +863,7 @@ export function installInspectPicker(
 
       await waitForPaint();
 
-      const payload = snapshotPayload(element, win);
+      const payload = buildPayload(element, win);
 
       controls.dispose();
 
