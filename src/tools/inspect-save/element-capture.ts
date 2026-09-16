@@ -55,12 +55,16 @@ async function cropViewportShot(dataUrl: string, rect: InspectRect) {
 async function captureSingleViewport(tabId: number, windowId: number, rect: InspectRect) {
   const targetScrollX = Math.max(0, rect.left);
   const targetScrollY = Math.max(0, rect.top);
-  await browser.scripting.executeScript({ target: { tabId }, func: moveTo, args: [targetScrollX, targetScrollY] });
+  const [position] = await browser.scripting.executeScript({ target: { tabId }, func: moveTo, args: [targetScrollX, targetScrollY] });
+  // The page may not scroll that far (short or non-scrollable pages): crop at
+  // the scroll position it actually reached, not the requested one.
+  const point = position?.result as { x: number; y: number } | undefined;
+  if (!point) throw new Error('La pagina è cambiata durante la cattura. Riprova.');
   const dataUrl = await captureVisible(windowId);
   const adjusted: InspectRect = {
     ...rect,
-    scrollX: targetScrollX,
-    scrollY: targetScrollY,
+    scrollX: point.x,
+    scrollY: point.y,
   };
   return cropViewportShot(dataUrl, adjusted);
 }
