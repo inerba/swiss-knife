@@ -2,7 +2,7 @@
 
 ![Swiss Knife: 12 strumenti per la pagina che stai visitando, nel pannello laterale di Chrome](docs/banner.png)
 
-Swiss Knife raccoglie **12 strumenti per lavorare sulle pagine web** in un unico pannello laterale: cattura immagini e screenshot, ispeziona elementi, controlla colori e contrasti, compila form di prova e genera contenuti da copiare.
+Swiss Knife raccoglie **13 strumenti per lavorare sulle pagine web** in un unico pannello laterale: cattura immagini e screenshot, ispeziona elementi, controlla colori e contrasti, compila form di prova e genera contenuti da copiare.
 
 L’interfaccia è in italiano, con tema chiaro e un catalogo personalizzabile. Gli strumenti di conversione e generazione lavorano localmente; quelli che analizzano la pagina operano su richiesta.
 
@@ -56,6 +56,7 @@ Gli strumenti sono elencati nell’ordine predefinito della prima installazione.
 | **Codifica e converti** | Converte testo e rappresentazioni di byte; calcola hash localmente. |
 | **Generatore password** | Genera password con lunghezza, caratteri e regole personalizzabili. |
 | **Elenca iframe** | Elenca i contenuti incorporati nella pagina e apre gli URL accessibili in nuove schede. |
+| **Browser context** | Seleziona un elemento e copia markup, CSS e anteprima in un report Markdown per agenti AI. |
 
 ### Emoji
 
@@ -140,6 +141,14 @@ Le combinazioni impossibili producono un errore invece di un risultato incomplet
 Avvia la scansione per vedere gli iframe presenti nel documento, compresi quelli annidati accessibili. Ogni riga corrisponde a un elemento; il livello 0 indica un iframe nel documento principale. **Apri** porta il suo URL HTTP/HTTPS in una nuova scheda.
 
 Gli iframe di un’altra origine possono essere elencati, ma il loro contenuto non accessibile non viene esplorato. Gli URL sono quelli dichiarati nella pagina e possono cambiare dopo un reindirizzamento. Iframe inline o senza un URL HTTP/HTTPS non hanno un collegamento apribile.
+
+### Browser context
+
+Premi **Seleziona**, fai clic su un elemento per fissarlo, regola la selezione con **Amplia**/**Restringi** (o ↑/↓) e premi **Conferma**. Il report viene copiato negli appunti, pronto da incollare in un agente AI come Claude Code, Codex, Copilot o Cursor. **Esc** annulla.
+
+Il report è in inglese e contiene URL, viewport, dimensioni, percorso DOM, markup e le regole CSS che colpiscono l’elemento così come sono scritte, con file di origine e contesto `@media`, `@supports`, `@layer` o `@container`. Include anche le regole di altri breakpoint, gli stati `:hover`/`:focus`/`:active`, gli stili ereditati, `::before`/`::after`, i valori calcolati diversi dal default del browser e le variabili CSS usate. Dal pannello puoi copiare di nuovo il report, copiare l’immagine o scaricare `.md` e `.png` in `Download/swiss-knife/browser-context/`.
+
+I fogli di stile cross-origin non sono leggibili e vengono elencati nel report; le condizioni `@container` non vengono valutate; il contenuto delle shadow root non compare nel markup. Il markup lungo viene tagliato a 60 KB e i `data:` URI vengono abbreviati. Il report può contenere testi e URL della pagina: controllalo prima di condividerlo. Lo strumento riprende l’approccio di [Pinpoint](https://github.com/MarcellM01/Pinpoint) (MIT).
 
 ## Permessi e privacy
 
