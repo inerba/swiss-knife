@@ -42,6 +42,19 @@ it('drops border and outline colours that only follow the text colour', () => {
   ]);
 });
 
+it('drops context-only sizing, row rules and text size adjustments', () => {
+  const computed = values({
+    color: 'rgb(20, 20, 20)',
+    'min-width': 'auto',
+    'min-height': 'auto',
+    'row-rule-color': 'rgb(20, 20, 20)',
+    'text-size-adjust': '100%',
+    'max-width': '512px',
+  });
+  const baseline = values({ 'min-width': '0px', 'min-height': '0px', 'max-width': 'none' });
+  expect(diffComputed(computed, baseline, new Map())).toEqual(['color: rgb(20, 20, 20);', 'max-width: 512px;']);
+});
+
 it('folds longhands into their computed shorthand', () => {
   const computed = values({ 'margin-top': '8px', 'margin-bottom': '8px', 'border-top-left-radius': '4px', 'padding-left': '2px' });
   const shorthands = values({ margin: '8px 0px', 'border-radius': '4px 0px 0px', padding: '' });

@@ -1,20 +1,20 @@
 export const OUTLINE_CLASS = 'swiss-inspector-outline';
-const STATE_CLASS = /^(active|hover|focus|selected|open)$/i;
+export const STATE_CLASS = /^(active|hover|focus|selected|open)$/i;
 
-function escapeCss(value: string) {
+export function escapeCss(value: string) {
   if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') return CSS.escape(value);
   return value.replace(/[^a-zA-Z0-9_-]/g, character => `\\${character}`);
 }
 
 export function selectorSegment(element: Element): string {
   const tag = element.localName;
-  if (element.id) return `${tag}#${escapeCss(element.id)}`;
+  const id = element.id ? `#${escapeCss(element.id)}` : '';
   const classes = [...element.classList]
     .filter(name => name && name !== OUTLINE_CLASS && !STATE_CLASS.test(name))
     .slice(0, 3)
     .map(name => `.${escapeCss(name)}`)
     .join('');
-  if (classes) return `${tag}${classes}`;
+  if (id || classes) return `${tag}${id}${classes}`;
   const parent = element.parentElement;
   if (!parent) return tag;
   const siblings = [...parent.children].filter(child => child.localName === tag);
@@ -24,9 +24,10 @@ export function selectorSegment(element: Element): string {
 export function selectorPath(element: Element): string {
   const segments: string[] = [];
   let current: Element | null = element;
-  while (current && segments.length < 8) {
+  while (current && current !== current.ownerDocument.documentElement && segments.length < 8) {
     segments.unshift(selectorSegment(current));
-    if (current.id) break;
+    // The element's own id does not stop the walk: ancestors give context.
+    if (current !== element && current.id) break;
     current = current.parentElement;
   }
   return segments.join(' > ');

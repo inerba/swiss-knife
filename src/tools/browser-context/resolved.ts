@@ -6,13 +6,17 @@ export type StyleValues = Map<string, string>;
 
 const NOISE_PROPERTIES = new Set([
   'block-size', 'inline-size', 'min-block-size', 'min-inline-size',
-  'max-block-size', 'max-inline-size', 'perspective-origin', 'transform-origin',
+  'max-block-size', 'max-inline-size', 'perspective-origin', 'text-size-adjust', 'transform-origin',
 ]);
 const NOISE_PREFIXES = ['border-block', 'border-inline', 'inset-', 'margin-block', 'margin-inline', 'padding-block', 'padding-inline'];
 const COLOR_MIRRORS = new Set([
   'border-bottom-color', 'border-left-color', 'border-right-color', 'border-top-color',
-  'caret-color', 'column-rule-color', 'outline-color', 'text-decoration-color', 'text-emphasis-color',
+  'caret-color', 'column-rule-color', 'outline-color', 'row-rule-color', 'text-decoration-color', 'text-emphasis-color',
 ]);
+
+// Flex and grid items report min-width/min-height as 'auto' where a plain
+// block reports '0px': a layout-context difference, not authored styling.
+const AUTO_MINIMUMS = new Set(['min-height', 'min-width']);
 
 export const SHORTHAND_GROUPS: Array<[string, (property: string) => boolean]> = [
   ['margin', property => property.startsWith('margin-')],
@@ -28,6 +32,7 @@ export function diffComputed(computed: StyleValues, baseline: StyleValues, short
     if (property.startsWith('-') || NOISE_PROPERTIES.has(property)) continue;
     if (NOISE_PREFIXES.some(prefix => property.startsWith(prefix))) continue;
     if (COLOR_MIRRORS.has(property) && value === color) continue;
+    if (AUTO_MINIMUMS.has(property) && value === 'auto') continue;
     if (value !== (baseline.get(property) ?? '')) changed.add(property);
   }
   const lines: string[] = [];
