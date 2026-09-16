@@ -42,12 +42,17 @@ it('lists Generatore password in the catalog', () => {
   expect(names).toContain('Generatore password');
   expect(host.querySelectorAll('#tool-password-generator')).toHaveLength(1);
 });
+it('lists Browser context at the end of the catalog', () => {
+  const names = [...host.querySelectorAll('.tool-card strong')].map(node => node.textContent);
+  expect(names.at(-1)).toBe('Browser context');
+  expect(host.querySelectorAll('#tool-browser-context')).toHaveLength(1);
+});
 it('uses the requested default order on a fresh installation', () => {
   const names = [...host.querySelectorAll('.tool-card strong')].map(node => node.textContent);
   expect(names).toEqual([
     'Emoji', 'Cattura file multimediali', 'Colori', 'QR code',
     'Compila form', 'Lorem Ipsum', 'Screenshot', 'Contrasti',
-    'Ispeziona e salva', 'Codifica e converti', 'Generatore password', 'Elenca iframe',
+    'Ispeziona e salva', 'Codifica e converti', 'Generatore password', 'Elenca iframe', 'Browser context',
   ]);
 });
 it('keeps catalog controls hidden until the filter and sort button is activated', async () => {
