@@ -31,7 +31,7 @@ Questi valori restano nel profilo del browser dell'utente, sono cancellabili dis
 l'estensione o svuotandone i dati, e non sono accessibili agli sviluppatori.
 
 I risultati delle analisi sulla pagina (screenshot, palette estratte, elementi ispezionati,
-elenchi di iframe) sono temporanei e vengono invalidati al cambio scheda o alla navigazione.
+report di contesto per agenti AI, elenchi di iframe) sono temporanei e vengono invalidati al cambio scheda o alla navigazione.
 
 ## Richieste di rete
 
@@ -112,7 +112,8 @@ Only user preferences are stored in the local browser profile (`chrome.storage`)
 These values remain in the user's browser profile, can be removed by uninstalling the extension
 or clearing its data, and are not accessible to the developers.
 
-Results of page analysis (screenshots, extracted palettes, inspected elements, iframe listings)
+Results of page analysis (screenshots, extracted palettes, inspected elements,
+browser context reports for AI agents, iframe listings)
 are temporary and are invalidated when the user switches tabs or navigates away.
 
 ## Network requests
