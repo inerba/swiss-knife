@@ -123,7 +123,7 @@ Scansione di `document.styleSheets` e `document.adoptedStyleSheets` in ordine di
 - **Dichiarazioni**: da `rule.style.cssText`, divise su `;` fuori da virgolette e parentesi (preserva `url(data:…;base64,…)`, `var()` e shorthand come scritti). Formato: `selettore { prima;\n  seconde; }`. Regole senza dichiarazioni scartate.
 - **Inline**: `element.style.cssText` non vuoto → regola `element.style` in coda alle corrispondenti.
 - **Stati**: rimozione di `:hover`, `:focus`, `:focus-visible`, `:focus-within`, `:active` dal segmento; se il resto corrisponde, la regola va nello stato (focus-visible/within → `:focus`). Rimosse le regole già presenti tra le corrispondenti.
-- **Pseudo-elementi**: solo se `getComputedStyle(element, '::before' | '::after').content !== 'none'`; corrispondenza sul segmento privato di `::before`/`::after` (base vuota → `*`).
+- **Pseudo-elementi**: solo se `getComputedStyle(element, '::before' | '::after').content !== 'none'`; corrispondenza sul segmento privato di `::before`/`::after`; basi vuote o `*` escluse perché sono reset universali.
 - **Ereditato**: risalendo gli antenati, le regole corrispondenti ridotte alle sole proprietà ereditabili (elenco di Pinpoint: color, font*, line-height, letter-spacing, text-*, white-space, word-*, visibility, cursor, direction, list-style*, quotes, tab-size, hyphens, overflow-wrap, border-collapse, border-spacing, caption-side, empty-cells).
 - **Variabili**: nomi `--x` trovati in `var(--x` nel testo delle regole corrispondenti ed ereditate, valori da `getComputedStyle(element)`; `(unset)` se vuoto.
 - **Esclusioni**: fogli e nodi dell’overlay di Swiss Knife (marcati `data-swiss-inspect` o nello shadow host del picker) e la classe `swiss-inspector-outline`.
@@ -134,7 +134,7 @@ Limiti: 40 corrispondenti, 15 altri breakpoint, 12 ereditate, 20 per stato e per
 ### Valori calcolati (`resolved.ts`)
 
 - Iframe `about:blank` invisibile (`position:absolute;width:0;height:0;border:0;visibility:hidden`) aggiunto a `documentElement`, elemento vergine dello stesso tag nel suo body, rimosso in `finally`.
-- Proprietà tenute: quelle con valore diverso dal riferimento, escluse le vendor (`-…`), alias logici (`block-size`, `inline-size`, `min/max-block/inline-size`, `inset-*`, `margin-block*`, `margin-inline*`, `padding-block*`, `padding-inline*`), `perspective-origin`, `transform-origin`, e i colori che replicano `color` (`caret-color`, `column-rule-color`, `text-decoration-color`, `text-emphasis-color`).
+- Proprietà tenute: quelle con valore diverso dal riferimento, escluse le vendor (`-…`), alias logici (`block-size`, `inline-size`, `min/max-block/inline-size`, `inset-*`, `border-block*`, `border-inline*`, `margin-block*`, `margin-inline*`, `padding-block*`, `padding-inline*`), `perspective-origin`, `transform-origin`, e i colori che replicano `color` (`border-*-color`, `caret-color`, `column-rule-color`, `outline-color`, `text-decoration-color`, `text-emphasis-color`).
 - Ripiegamento: gruppi `margin-*`, `padding-*`, `border-*-radius`, `border-*` (esclusi radius e image) sostituiti dalla shorthand calcolata se non vuota.
 - Ordine: shorthand ripiegate, poi proprietà in ordine alfabetico. Massimo 200. In caso di errore: lista vuota.
 - La logica di confronto e ripiegamento è una funzione pura su mappe `proprietà → valore`; la lettura DOM è separata.

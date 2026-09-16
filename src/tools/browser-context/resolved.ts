@@ -8,8 +8,11 @@ const NOISE_PROPERTIES = new Set([
   'block-size', 'inline-size', 'min-block-size', 'min-inline-size',
   'max-block-size', 'max-inline-size', 'perspective-origin', 'transform-origin',
 ]);
-const NOISE_PREFIXES = ['inset-', 'margin-block', 'margin-inline', 'padding-block', 'padding-inline'];
-const COLOR_MIRRORS = new Set(['caret-color', 'column-rule-color', 'text-decoration-color', 'text-emphasis-color']);
+const NOISE_PREFIXES = ['border-block', 'border-inline', 'inset-', 'margin-block', 'margin-inline', 'padding-block', 'padding-inline'];
+const COLOR_MIRRORS = new Set([
+  'border-bottom-color', 'border-left-color', 'border-right-color', 'border-top-color',
+  'caret-color', 'column-rule-color', 'outline-color', 'text-decoration-color', 'text-emphasis-color',
+]);
 
 export const SHORTHAND_GROUPS: Array<[string, (property: string) => boolean]> = [
   ['margin', property => property.startsWith('margin-')],

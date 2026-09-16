@@ -25,6 +25,23 @@ it('drops vendor, logical and mirrored colour properties', () => {
   ]);
 });
 
+it('drops border and outline colours that only follow the text colour', () => {
+  const computed = values({
+    color: 'rgb(20, 20, 20)',
+    'border-top-color': 'rgb(20, 20, 20)',
+    'border-right-color': 'rgb(20, 20, 20)',
+    'border-bottom-color': 'rgb(20, 20, 20)',
+    'border-left-color': 'rgb(20, 20, 20)',
+    'border-block-start-color': 'rgb(0, 0, 255)',
+    'border-inline-end-width': '3px',
+    'outline-color': 'rgb(255, 0, 0)',
+  });
+  expect(diffComputed(computed, new Map(), values({ border: '0px none rgb(20, 20, 20)' }))).toEqual([
+    'color: rgb(20, 20, 20);',
+    'outline-color: rgb(255, 0, 0);',
+  ]);
+});
+
 it('folds longhands into their computed shorthand', () => {
   const computed = values({ 'margin-top': '8px', 'margin-bottom': '8px', 'border-top-left-radius': '4px', 'padding-left': '2px' });
   const shorthands = values({ margin: '8px 0px', 'border-radius': '4px 0px 0px', padding: '' });
