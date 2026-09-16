@@ -18,3 +18,8 @@ it('wraps long selectors and the report preview', () => {
 it('does not inherit control colours', () => {
   expect(css).not.toMatch(/color:\s*inherit/);
 });
+
+it('wraps long selectors and makes them easy to select', () => {
+  expect(css).toMatch(/\.context-selector-body code\s*\{[^}]*overflow-wrap:\s*anywhere/s);
+  expect(css).toMatch(/\.context-selector-body code\s*\{[^}]*user-select:\s*all/s);
+});

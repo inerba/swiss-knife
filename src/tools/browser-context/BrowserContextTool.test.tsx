@@ -168,3 +168,32 @@ it('cancels with Escape while picking', async () => {
   expect(host.textContent).toContain('Selezione annullata.');
   expect(button('Seleziona')).toBeTruthy();
 });
+
+it('lists every selector with its match count and a copy button', async () => {
+  await capture();
+  const rows = [...host.querySelectorAll('.context-selector')];
+  expect(rows.map(row => row.querySelector('.context-selector-label')?.textContent)).toEqual([
+    'CSS breve', 'CSS completo', 'XPath relativo', 'Playwright',
+  ]);
+  expect(rows.map(row => row.querySelector('.context-selector-badge')?.textContent)).toEqual([
+    'unico', 'unico', 'unico', '2 risultati (stima)',
+  ]);
+  expect(rows[2]!.querySelector('code')?.textContent).toBe("//main[@id='app']/div");
+
+  writeText.mockClear();
+  const copy = rows[2]!.querySelector<HTMLButtonElement>('button')!;
+  expect(copy.getAttribute('aria-label')).toBe('Copia XPath relativo');
+  await act(async () => { copy.click(); await Promise.resolve(); });
+  await flush();
+  expect(writeText).toHaveBeenCalledWith("//main[@id='app']/div");
+  expect(copy.textContent).toContain('Copiato');
+});
+
+it('reports when a selector cannot be copied', async () => {
+  await capture();
+  writeText.mockRejectedValue(new Error('denied'));
+  const copy = host.querySelector<HTMLButtonElement>('.context-selector button')!;
+  await act(async () => { copy.click(); await Promise.resolve(); });
+  await flush();
+  expect(host.textContent).toContain('Impossibile copiare il selettore. Selezionalo e copialo a mano.');
+});

@@ -14,7 +14,8 @@ export function isContextPayload(value: unknown): value is ContextPayload {
     && !!item.viewport
     && !!item.css
     && Array.isArray(item.css.matched)
-    && Array.isArray(item.unreadableSheets);
+    && Array.isArray(item.unreadableSheets)
+    && Array.isArray(item.selectors);
 }
 
 export interface BrowserContextHandlers {

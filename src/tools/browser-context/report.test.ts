@@ -21,6 +21,8 @@ it('formats the full report with only non-empty sections', () => {
     '- Viewport: 1440 × 900 px, 2x pixel ratio',
     '- Rendered size: 320 × 412 px at (560, 180)',
     '- DOM path: main#app > div.card',
+    '- CSS selector: `div.card`',
+    "- XPath: `//main[@id='app']/div`",
     '',
     '## Markup',
     '',
@@ -83,7 +85,7 @@ it('notes unreadable stylesheets', () => {
   expect(unreadableNote([])).toBeNull();
   expect(unreadableNote(['a.test'])).toBe('> 1 stylesheet could not be read (cross-origin): a.test');
   expect(unreadableNote(['a', 'b', 'c', 'd', 'e', 'f', 'g'])).toBe('> 7 stylesheets could not be read (cross-origin): a, b, c, d, e and 2 more');
-  expect(formatReport(samplePayload({ unreadableSheets: ['fonts.example.com'] }))).toContain('- DOM path: main#app > div.card\n\n> 1 stylesheet');
+  expect(formatReport(samplePayload({ unreadableSheets: ['fonts.example.com'] }))).toContain("- XPath: `//main[@id='app']/div`\n\n> 1 stylesheet");
 });
 
 it('reports when no styles were found', () => {
@@ -109,4 +111,12 @@ it('derives file names and timestamps', () => {
 it('estimates size and tokens', () => {
   expect(estimateTokens('abcde')).toBe(2);
   expect(formatReportStats('a'.repeat(15_000))).toBe('Report: 15 KB · ~3750 token');
+});
+
+it('omits selector lines when none were collected and escapes backticks', () => {
+  const report = formatReport(samplePayload({ selectors: [] }));
+  expect(report).not.toContain('- CSS selector:');
+  expect(report).not.toContain('- XPath:');
+  const tricky = formatReport(samplePayload({ selectors: [{ kind: 'css-short', value: '[title="a`b"]', matches: 1, estimated: false }] }));
+  expect(tricky).toContain('- CSS selector: `` [title="a`b"] ``');
 });

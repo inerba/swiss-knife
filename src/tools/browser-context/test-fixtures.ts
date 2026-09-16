@@ -19,6 +19,12 @@ export function samplePayload(overrides: Partial<ContextPayload> = {}): ContextP
       variables: [],
     },
     unreadableSheets: [],
+    selectors: [
+      { kind: 'css-short', value: 'div.card', matches: 1, estimated: false },
+      { kind: 'css-full', value: 'html > body > main:nth-of-type(1) > div:nth-of-type(1)', matches: 1, estimated: false },
+      { kind: 'xpath-relative', value: "//main[@id='app']/div", matches: 1, estimated: false },
+      { kind: 'playwright', value: "getByText('Hi', { exact: true })", matches: 2, estimated: true },
+    ],
     ...overrides,
   };
 }
