@@ -223,3 +223,22 @@ Limiti: 40 corrispondenti, 15 altri breakpoint, 12 ereditate, 20 per stato e per
 ## Licenza
 
 La logica di raccolta CSS è derivata da Pinpoint (MIT). Aggiungere la voce (copyright © 2026 TinySuite, testo MIT) in `public/THIRD-PARTY-NOTICES.txt`.
+
+## Aggiornamento 2026-09-16 — titolo, percorso e selettori
+
+Richiesto dopo il confronto con Pinpoint su una pagina Filament.
+
+- **Titolo**: `tag#id.classe1.classe2.classe3` (id e classi insieme; `:nth-of-type` solo se mancano entrambi).
+- **Percorso DOM**: l’id dell’elemento non interrompe la risalita; ci si ferma al primo *antenato* con id, escluso `html`, massimo 8 segmenti.
+- **Valori calcolati**: esclusi anche `min-width`/`min-height` uguali ad `auto` (contesto flex/grid), `row-rule-color` quando replica `color`, `text-size-adjust`.
+- **Report**: dopo `DOM path` compaiono `- CSS selector:` (CSS breve) e `- XPath:` (XPath relativo) in code span.
+- **Selettori nel pannello** (`selectors.ts`, `locators.ts`, `SelectorList.tsx`), calcolati nella pagina alla conferma e inviati nel payload come `selectors: SelectorSuggestion[]` (`kind`, `value`, `matches`, `estimated`):
+  - *CSS breve*: primo candidato unico tra `#id`, attributi di test (`data-testid`, `data-test`, `data-test-id`, `data-cy`, `data-qa`), `tag[name|aria-label|placeholder]`, `a[href]` (≤ 120 caratteri), `tag.classe`, combinazione di classi, `tag`; altrimenti ancorato al primo antenato con candidato unico (discendente, poi catena `:nth-of-type`); altrimenti CSS completo.
+  - *CSS completo*: `html > body > … > tag:nth-of-type(n)`.
+  - *XPath relativo*: `//tag[@id|@data-*|@name|@aria-label|@placeholder|classe]` unico; altrimenti ancorato all’antenato con id o attributo di test unico; altrimenti assoluto.
+  - *XPath assoluto*: indici solo se ci sono fratelli con lo stesso tag; elementi non HTML come `*[local-name()='svg']`.
+  - *XPath per testo*: `//tag[normalize-space()=…]` se il testo normalizzato è lungo al massimo 60 caratteri.
+  - *Playwright*: fino a 3 tra `getByTestId`, `getByRole` (con `name` ed `exact: true`, o senza nome per i landmark), `getByLabel`, `getByPlaceholder`, `getByAltText`, `getByText`; ruolo, etichetta e testo sono conteggi stimati.
+  - Id e classi scartati se generati: `:[]/@!()%`, 3+ cifre consecutive, prefissi `css-`, `sc-`, `jsx-`, `emotion-`, `svelte-`, `chakra-`, `mui-`, token alfanumerici casuali di 10+ caratteri con maiuscole, minuscole e cifre.
+  - Dentro una shadow root gli XPath non vengono proposti; i conteggi valgono nel documento o nella shadow root dell’elemento.
+- **Pannello**: sezione «Selettori» sotto le azioni; per ogni riga tipo, valore selezionabile, badge «unico» / «N risultati» / «nessun risultato» con «(stima)» quando serve, pulsante **Copia** che diventa «Copiato» per 1,5 s. Errore di copia: «Impossibile copiare il selettore. Selezionalo e copialo a mano.»

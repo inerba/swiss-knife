@@ -13,6 +13,7 @@ it('validates context payloads', () => {
   expect(isContextPayload(samplePayload())).toBe(true);
   expect(isContextPayload({})).toBe(false);
   expect(isContextPayload({ ...samplePayload(), css: undefined })).toBe(false);
+  expect(isContextPayload({ ...samplePayload(), selectors: undefined })).toBe(false);
   expect(isContextPayload(null)).toBe(false);
 });
 

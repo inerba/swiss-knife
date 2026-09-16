@@ -34,6 +34,15 @@ export interface CssContext {
   variables: string[];
 }
 
+export type SelectorKind = 'css-short' | 'css-full' | 'xpath-relative' | 'xpath-absolute' | 'xpath-text' | 'playwright';
+
+export interface SelectorSuggestion {
+  kind: SelectorKind;
+  value: string;
+  matches: number;
+  estimated: boolean;
+}
+
 export interface ContextPayload {
   element: string;
   path: string;
@@ -44,6 +53,7 @@ export interface ContextPayload {
   markup: string;
   css: CssContext;
   unreadableSheets: string[];
+  selectors: SelectorSuggestion[];
 }
 
 export interface ContextResult extends ContextPayload {

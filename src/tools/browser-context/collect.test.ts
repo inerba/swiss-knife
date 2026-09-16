@@ -18,6 +18,8 @@ it('builds a serialisable payload for the element', () => {
   expect(payload.css.matched).toContain('/* <style> */\n.card { padding: 24px; }');
   expect(payload.css.inherited).toContain('/* <style> */\nbody { color: red; }');
   expect(payload.unreadableSheets).toEqual([]);
+  expect(payload.selectors.find(item => item.kind === 'css-short')).toEqual({ kind: 'css-short', value: 'div.card', matches: 1, estimated: false });
+  expect(payload.selectors.find(item => item.kind === 'xpath-relative')?.value).toBe("//div[contains(concat(' ', normalize-space(@class), ' '), ' card ')]");
   expect(payload.viewport).toEqual({ width: window.innerWidth, height: window.innerHeight, devicePixelRatio: 1 });
   expect(JSON.parse(JSON.stringify(payload))).toEqual(payload);
 });

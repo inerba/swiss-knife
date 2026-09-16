@@ -17,6 +17,11 @@ export function markdownDestination(file: string) {
   return /[\s()<>]/.test(file) ? `<${file}>` : file;
 }
 
+// Inline code that survives backticks inside the value (CommonMark code spans).
+export function inlineCode(value: string) {
+  return value.includes('`') ? `\`\` ${value} \`\`` : `\`${value}\``;
+}
+
 export function unreadableNote(hosts: string[]): string | null {
   if (!hosts.length) return null;
   const shown = hosts.slice(0, MAX_HOSTS).join(', ');
@@ -35,6 +40,10 @@ export function formatReport(payload: ContextPayload, options: ReportOptions = {
     `- Rendered size: ${box.width} × ${box.height} px at (${box.left}, ${box.top})`,
     `- DOM path: ${path}`,
   ];
+  const cssSelector = payload.selectors.find(item => item.kind === 'css-short');
+  const xpath = payload.selectors.find(item => item.kind === 'xpath-relative');
+  if (cssSelector) lines.push(`- CSS selector: ${inlineCode(cssSelector.value)}`);
+  if (xpath) lines.push(`- XPath: ${inlineCode(xpath.value)}`);
   const note = unreadableNote(payload.unreadableSheets);
   if (note) lines.push('', note);
   if (options.screenshotFile) {

@@ -3,6 +3,7 @@ import { listSheets, scanStyleSheets, type ScanEnvironment } from './css-rules';
 import { cleanMarkup } from './markup';
 import { selectorPath, selectorSegment } from './path';
 import { readResolvedValues } from './resolved';
+import { buildSelectors } from './selectors';
 import type { ContextPayload } from './types';
 
 export function scanEnvironment(view: Window): ScanEnvironment {
@@ -54,5 +55,6 @@ export function buildContextPayload(element: Element, view: Window): ContextPayl
     markup: cleanMarkup(element),
     css: { ...rules, resolved: readResolvedValues(element, view) },
     unreadableSheets: scan.unreadable,
+    selectors: buildSelectors(element),
   };
 }

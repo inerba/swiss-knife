@@ -6,6 +6,7 @@ import type { PickerEndReason, PickerSessionControl } from '../inspect-save/pick
 import type { LockedPreview, PickerCommand } from '../inspect-save/types';
 import { downloadReport } from './download';
 import { formatReport, formatReportStats } from './report';
+import { SelectorList } from './SelectorList';
 import { startBrowserContextSession } from './session';
 import type { ContextResult } from './types';
 import './browser-context.css';
@@ -323,6 +324,8 @@ export function BrowserContextTool() {
           {feedback && (
             <p className={`context-feedback ${feedbackError ? 'is-error' : ''}`} role={feedbackError ? 'alert' : 'status'}>{feedback}</p>
           )}
+
+          <SelectorList selectors={result.selectors} onCopyError={message => showFeedback(message, true)} />
 
           <details className="context-report">
             <summary>Anteprima report</summary>
