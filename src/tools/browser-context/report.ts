@@ -30,6 +30,40 @@ export function unreadableNote(hosts: string[]): string | null {
   return `> ${hosts.length} ${noun} could not be read (cross-origin): ${shown}${extra}`;
 }
 
+export const AGENT_PROMPT_PREAMBLE = 'The following context identifies a rendered element on the page. In the available project, locate the source implementation that produces it using the information provided, and apply the requested change there. Do not recreate the page and do not modify generated files. Treat the change as referring to this instance and preserve existing behavior unless instructed otherwise. If the match is not certain enough, verify before making changes.';
+
+export function formatAgentPrompt(payload: ContextPayload, request = ''): string {
+  const { element, path, url, box, markup, css } = payload;
+  const lines = [AGENT_PROMPT_PREAMBLE, ''];
+  if (request.trim()) {
+    lines.push('## Requested change', '', request, '');
+  }
+  lines.push(
+    '## Identification',
+    '',
+    `- Element: ${inlineCode(element)}`,
+    `- Page: ${url}`,
+    `- DOM path: ${path}`,
+  );
+  const cssSelector = payload.selectors.find(item => item.kind === 'css-short');
+  if (cssSelector) lines.push(`- CSS selector: ${inlineCode(cssSelector.value)}`);
+  lines.push(`- Rendered size: ${box.width} × ${box.height} px at (${box.left}, ${box.top})`);
+  if (markup) lines.push('', '## Markup', '', ...fence(markup, 'html'));
+  if (css.matched.length) {
+    lines.push('', '## Matching rules, as authored', '', ...fence(css.matched.join('\n\n'), 'css'));
+  }
+  return `${lines.join('\n')}\n`;
+}
+
+function formatTextStats(label: string, text: string): string {
+  const bytes = new TextEncoder().encode(text).length;
+  return `${label}: ${formatKilobytes(bytes)} · ~${estimateTokens(text).toLocaleString('it-IT')} token`;
+}
+
+export function formatPromptStats(text: string): string {
+  return formatTextStats('Prompt', text);
+}
+
 export function formatReport(payload: ContextPayload, options: ReportOptions = {}): string {
   const { element, path, url, viewport, box, markup, css } = payload;
   const lines = [
@@ -93,6 +127,5 @@ export function estimateTokens(text: string): number {
 }
 
 export function formatReportStats(text: string): string {
-  const bytes = new TextEncoder().encode(text).length;
-  return `Report: ${formatKilobytes(bytes)} · ~${estimateTokens(text).toLocaleString('it-IT')} token`;
+  return formatTextStats('Report', text);
 }

@@ -25,10 +25,6 @@ function cleanElement(element: Element) {
       element.setAttribute(attribute.name, shortenDataUri(attribute.value));
     }
   }
-  if (element.localName === 'path') {
-    const d = element.getAttribute('d');
-    if (d && d.length > LONG_VALUE) element.setAttribute('d', `${d.slice(0, 60)}…`);
-  }
   if (element.classList.contains(OUTLINE_CLASS)) {
     element.classList.remove(OUTLINE_CLASS);
     if (!element.classList.length) element.removeAttribute('class');

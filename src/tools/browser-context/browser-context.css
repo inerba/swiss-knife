@@ -158,6 +158,8 @@
   font-size: .82rem;
   overflow-wrap: anywhere;
 }
+.context-request label { margin-top: 0; }
+.context-request textarea { min-height: 72px; overflow-wrap: anywhere; }
 .context-stats {
   color: var(--muted);
   font: .78rem/1.35 var(--font-mono);

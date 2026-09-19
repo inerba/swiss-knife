@@ -23,10 +23,11 @@ it('keeps short data uris and other attributes', () => {
   expect(cleanMarkup(element('<a href="/pricing" title="Prezzi">x</a>'))).toBe('<a href="/pricing" title="Prezzi">x</a>');
 });
 
-it('shortens long svg path data', () => {
+it('keeps long svg path data valid when cleaning markup', () => {
   const d = `M0 0 ${'L10 10 '.repeat(50)}`;
   const html = cleanMarkup(element(`<svg><path d="${d}"></path></svg>`));
-  expect(html).toContain(`d="${d.slice(0, 60)}…"`);
+  expect(html).toContain(`d="${d}"`);
+  expect(html).not.toContain('…');
 });
 
 it('truncates markup above the limit', () => {

@@ -2,6 +2,8 @@ import { expect, it } from 'vitest';
 import {
   estimateTokens,
   fence,
+  formatAgentPrompt,
+  formatPromptStats,
   formatReport,
   formatReportStats,
   markdownDestination,
@@ -119,4 +121,61 @@ it('omits selector lines when none were collected and escapes backticks', () => 
   expect(report).not.toContain('- XPath:');
   const tricky = formatReport(samplePayload({ selectors: [{ kind: 'css-short', value: '[title="a`b"]', matches: 1, estimated: false }] }));
   expect(tricky).toContain('- CSS selector: `` [title="a`b"] ``');
+});
+
+const PREAMBLE = 'The following context identifies a rendered element on the page. In the available project, locate the source implementation that produces it using the information provided, and apply the requested change there. Do not recreate the page and do not modify generated files. Treat the change as referring to this instance and preserve existing behavior unless instructed otherwise. If the match is not certain enough, verify before making changes.';
+
+it('assembles the agent prompt from a fixed subset without a change request', () => {
+  expect(formatAgentPrompt(samplePayload())).toBe([
+    PREAMBLE,
+    '',
+    '## Identification',
+    '',
+    '- Element: `div.card`',
+    '- Page: https://example.test/pricing',
+    '- DOM path: main#app > div.card',
+    '- CSS selector: `div.card`',
+    '- Rendered size: 320 × 412 px at (560, 180)',
+    '',
+    '## Markup',
+    '',
+    `${FENCE}html`,
+    '<div class="card">Hi</div>',
+    FENCE,
+    '',
+    '## Matching rules, as authored',
+    '',
+    `${FENCE}css`,
+    '/* assets/app.css */\n.card { padding: 24px; }',
+    FENCE,
+    '',
+  ].join('\n'));
+});
+
+it('inserts the change request verbatim and omits it when blank', () => {
+  const withRequest = formatAgentPrompt(samplePayload(), 'Metti l’immagine a sinistra');
+  expect(withRequest).toContain(`## Requested change\n\nMetti l’immagine a sinistra\n\n## Identification`);
+  expect(withRequest.startsWith(`${PREAMBLE}\n\n## Requested change`)).toBe(true);
+  expect(formatAgentPrompt(samplePayload(), '   ')).not.toContain('## Requested change');
+});
+
+it('omits empty agent-prompt sections and unused full-report facts', () => {
+  const prompt = formatAgentPrompt(samplePayload({
+    markup: '',
+    css: { matched: [], media: ['b'], states: { hover: ['h'], focus: [], active: [] }, inherited: [], pseudos: { before: [], after: [] }, resolved: ['r'], variables: [] },
+    selectors: [{ kind: 'xpath-relative', value: '//div', matches: 1, estimated: false }],
+    unreadableSheets: ['fonts.example.com'],
+  }));
+  expect(prompt).not.toContain('## Markup');
+  expect(prompt).not.toContain('## Matching rules');
+  expect(prompt).not.toContain('- CSS selector:');
+  expect(prompt).toContain('- Element: `div.card`');
+  expect(prompt).not.toContain('Viewport');
+  expect(prompt).not.toContain('XPath');
+  expect(prompt).not.toContain(':hover');
+  expect(prompt).not.toContain('stylesheet');
+});
+
+it('labels prompt stats separately from the full report', () => {
+  expect(formatPromptStats('a'.repeat(15_000))).toBe('Prompt: 15 KB · ~3750 token');
 });

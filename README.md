@@ -6,7 +6,7 @@ Swiss Knife raccoglie **13 strumenti per lavorare sulle pagine web** in un unico
 
 L’interfaccia è in italiano, con tema chiaro e un catalogo personalizzabile. Gli strumenti di conversione e generazione lavorano localmente; quelli che analizzano la pagina operano su richiesta.
 
-[Scarica una release](https://github.com/inerba/swiss-knife/releases) · [Segnala un problema](https://github.com/inerba/swiss-knife/issues)
+[Sito](https://inerba.github.io/swiss-knife/) · [Scarica una release](https://github.com/inerba/swiss-knife/releases) · [Privacy](https://inerba.github.io/swiss-knife/privacy/) · [Segnala un problema](https://github.com/inerba/swiss-knife/issues)
 
 ## Installazione
 
@@ -56,7 +56,7 @@ Gli strumenti sono elencati nell’ordine predefinito della prima installazione.
 | **Codifica e converti** | Converte testo e rappresentazioni di byte; calcola hash localmente. |
 | **Generatore password** | Genera password con lunghezza, caratteri e regole personalizzabili. |
 | **Elenca iframe** | Elenca i contenuti incorporati nella pagina e apre gli URL accessibili in nuove schede. |
-| **Browser context** | Seleziona un elemento e copia markup, CSS e anteprima in un report Markdown per agenti AI. |
+| **Browser context** | Seleziona un elemento, descrivi la modifica e copia un prompt pronto per un coding agent. |
 
 ### Emoji
 
@@ -144,9 +144,9 @@ Gli iframe di un’altra origine possono essere elencati, ma il loro contenuto n
 
 ### Browser context
 
-Premi **Seleziona**, fai clic su un elemento per fissarlo, regola la selezione con **Amplia**/**Restringi** (o ↑/↓) e premi **Conferma**. Il report viene copiato negli appunti, pronto da incollare in un agente AI come Claude Code, Codex, Copilot o Cursor. **Esc** annulla.
+Premi **Seleziona**, fai clic su un elemento per fissarlo, regola la selezione con **Amplia**/**Restringi** (o ↑/↓) e premi **Conferma**. Nella schermata del risultato puoi scrivere in **Cosa vuoi cambiare?** (facoltativo) e premere **Copia per agente**: ottieni un prompt inglese pronto da incollare in un coding agent come Claude Code, Codex, Copilot o Cursor. **Esc** annulla.
 
-Il report è in inglese e contiene URL, viewport, dimensioni, percorso DOM, un selettore CSS e un XPath, markup e le regole CSS che colpiscono l’elemento così come sono scritte, con file di origine e contesto `@media`, `@supports`, `@layer` o `@container`. Include anche le regole di altri breakpoint, gli stati `:hover`/`:focus`/`:active`, gli stili ereditati, `::before`/`::after`, i valori calcolati diversi dal default del browser e le variabili CSS usate. Dal pannello puoi copiare di nuovo il report, copiare l’immagine o scaricare `.md` e `.png` in `Download/swiss-knife/browser-context/`.
+Il prompt per agente non sintetizza: assembla un preambolo fisso, l’eventuale richiesta così come l’hai scritta e un insieme predefinito dei fatti già raccolti (URL, elemento, percorso DOM, selettore CSS breve, dimensioni renderizzate, markup e regole CSS corrispondenti come scritte, con file di origine). **Copia report completo** conserva il report Markdown tecnico inglese: viewport, XPath, markup e le regole CSS che colpiscono l’elemento così come sono scritte, con file di origine e contesto `@media`, `@supports`, `@layer` o `@container`. Include anche le regole di altri breakpoint, gli stati `:hover`/`:focus`/`:active`, gli stili ereditati, `::before`/`::after`, i valori calcolati diversi dal default del browser e le variabili CSS usate. Lo screenshot resta disponibile a parte con **Copia immagine** o nel download di `.md` e `.png` in `Download/swiss-knife/browser-context/`.
 
 La sezione **Selettori** del pannello propone, per scraper e test automatici, un CSS breve e uno completo, un XPath relativo, uno assoluto e uno basato sul testo, e fino a tre locator Playwright (`getByRole`, `getByLabel`, `getByTestId`…). Ognuno ha il pulsante **Copia** e indica quanti elementi trova sulla pagina al momento della cattura; per ruolo e testo il conteggio è una stima. Id e classi generati automaticamente (hash, sequenze di cifre, classi con `:` o `[`) vengono scartati perché cambiano da una build all’altra.
 

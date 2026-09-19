@@ -5,7 +5,7 @@ import { activeTab, explainError } from '../../lib/browser';
 import type { PickerEndReason, PickerSessionControl } from '../inspect-save/picker-session';
 import type { LockedPreview, PickerCommand } from '../inspect-save/types';
 import { downloadReport } from './download';
-import { formatReport, formatReportStats } from './report';
+import { formatAgentPrompt, formatPromptStats, formatReport } from './report';
 import { SelectorList } from './SelectorList';
 import { startBrowserContextSession } from './session';
 import type { ContextResult } from './types';
@@ -28,6 +28,7 @@ export function BrowserContextTool() {
   const [feedback, setFeedback] = useState('');
   const [feedbackError, setFeedbackError] = useState(false);
   const [copyFallback, setCopyFallback] = useState('');
+  const [changeRequest, setChangeRequest] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const generation = useRef(0);
@@ -42,6 +43,7 @@ export function BrowserContextTool() {
   lockedRef.current = !!lockedPreview;
 
   const report = useMemo(() => (result ? formatReport(result) : ''), [result]);
+  const prompt = useMemo(() => (result ? formatAgentPrompt(result, changeRequest) : ''), [result, changeRequest]);
 
   const resetSession = useCallback(() => {
     generation.current++;
@@ -59,6 +61,7 @@ export function BrowserContextTool() {
     setDownloading(false);
     if (clearResult) {
       setResult(null);
+      setChangeRequest('');
       setFeedback('');
       setFeedbackError(false);
       setCopyFallback('');
@@ -135,20 +138,17 @@ export function BrowserContextTool() {
     setFeedbackError(isError);
   }
 
-  async function copyReport(text: string, automatic: boolean, gen: number) {
+  async function copyText(text: string, kind: 'prompt' | 'report') {
+    const gen = generation.current;
     try {
       await navigator.clipboard.writeText(text);
       if (gen !== generation.current) return;
       setCopyFallback('');
-      showFeedback('Report copiato negli appunti.');
+      showFeedback(kind === 'prompt' ? 'Prompt copiato negli appunti.' : 'Report copiato negli appunti.');
     } catch {
       if (gen !== generation.current) return;
-      if (automatic) {
-        showFeedback('Chrome non ha permesso la copia automatica. Premi Copia report.');
-      } else {
-        setCopyFallback(text);
-        showFeedback('Impossibile scrivere negli appunti. Seleziona e copia il testo qui sotto.', true);
-      }
+      setCopyFallback(text);
+      showFeedback('Impossibile scrivere negli appunti. Seleziona e copia il testo qui sotto.', true);
     }
   }
 
@@ -187,6 +187,7 @@ export function BrowserContextTool() {
     setActive(true);
     setStatusError(false);
     setResult(null);
+    setChangeRequest('');
     setLockedPreview(null);
     setFeedback('');
     setFeedbackError(false);
@@ -217,7 +218,6 @@ export function BrowserContextTool() {
           setBusy(false);
           setStatus('');
           setStatusError(false);
-          void copyReport(formatReport(next), true, gen);
         },
       });
       if (gen !== generation.current) control.close();
@@ -252,7 +252,7 @@ export function BrowserContextTool() {
           <MousePointerClick aria-hidden="true" /> {active ? 'Clicca un elemento' : 'Seleziona'}
         </button>
       </div>
-      <p className="muted">Seleziona un elemento della pagina per copiarne markup, CSS e anteprima in un formato leggibile da un agente AI.</p>
+      <p className="muted">Seleziona un elemento, descrivi la modifica e copia un prompt pronto da incollare in un coding agent.</p>
 
       {(status || (busy && active)) && (
         <div className={`context-status ${statusError ? 'is-error' : ''}`}>
@@ -307,11 +307,25 @@ export function BrowserContextTool() {
             <p className="context-warning" role="status">Anteprima non disponibile: il report non include lo screenshot.</p>
           )}
 
-          <p className="context-stats">{formatReportStats(report)}</p>
+          <div className="context-request">
+            <label htmlFor="context-change-request">Cosa vuoi cambiare?</label>
+            <textarea
+              id="context-change-request"
+              rows={3}
+              value={changeRequest}
+              onChange={event => setChangeRequest(event.target.value)}
+              placeholder="Metti l’immagine a sinistra"
+            />
+          </div>
+
+          <p className="context-stats">{formatPromptStats(prompt)}</p>
 
           <div className="context-actions">
-            <button type="button" className="context-action-primary" onClick={() => void copyReport(report, false, generation.current)}>
-              <Copy aria-hidden="true" /> Copia report
+            <button type="button" className="context-action-primary" onClick={() => void copyText(prompt, 'prompt')}>
+              <Copy aria-hidden="true" /> Copia per agente
+            </button>
+            <button type="button" onClick={() => void copyText(report, 'report')}>
+              <Copy aria-hidden="true" /> Copia report completo
             </button>
             <button type="button" disabled={!result.png} onClick={() => void copyImage()}>
               <ImageIcon aria-hidden="true" /> Copia immagine
@@ -328,6 +342,10 @@ export function BrowserContextTool() {
           <SelectorList selectors={result.selectors} onCopyError={message => showFeedback(message, true)} />
 
           <details className="context-report">
+            <summary>Anteprima prompt</summary>
+            <pre>{prompt}</pre>
+          </details>
+          <details className="context-report">
             <summary>Anteprima report</summary>
             <pre>{report}</pre>
           </details>
@@ -335,7 +353,7 @@ export function BrowserContextTool() {
       )}
 
       {copyFallback && (
-        <textarea className="context-copy-fallback" readOnly value={copyFallback} aria-label="Report da copiare manualmente" />
+        <textarea className="context-copy-fallback" readOnly value={copyFallback} aria-label="Testo da copiare manualmente" />
       )}
 
       {previewOpen && result?.png && (

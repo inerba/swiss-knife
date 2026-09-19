@@ -62,7 +62,7 @@ export const tools: ToolDefinition[] = [{
   component: IframeTool,
 }, {
   id: 'browser-context', name: 'Browser context', icon: Crosshair,
-  description: 'Seleziona un elemento e copia HTML e CSS pronti per un agente AI.',
+  description: 'Seleziona un elemento e copia contesto, selettori e codice.',
   component: BrowserContextTool,
 }];
 import { Binary, Camera, Contrast, Crosshair, FileText, FormInput, KeyRound, Palette, PanelsTopLeft, QrCode, ScanEye, Smile, SquareDashedMousePointer } from 'lucide-react';
