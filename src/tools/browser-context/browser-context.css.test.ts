@@ -13,6 +13,7 @@ it('wraps long selectors and the report preview', () => {
   expect(css).toMatch(/\.context-pill\s*\{[^}]*overflow-wrap:\s*anywhere/s);
   expect(css).toMatch(/\.context-report pre\s*\{[^}]*white-space:\s*pre-wrap/s);
   expect(css).toMatch(/\.context-report pre\s*\{[^}]*overflow-wrap:\s*anywhere/s);
+  expect(css).toMatch(/\.context-request textarea\s*\{[^}]*overflow-wrap:\s*anywhere/s);
 });
 
 it('does not inherit control colours', () => {

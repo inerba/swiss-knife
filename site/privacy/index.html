@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Informativa sulla privacy — Swiss Knife</title>
+<meta name="description" content="Swiss Knife non raccoglie, non trasmette e non vende dati personali. Informativa completa.">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="canonical" href="https://inerba.github.io/swiss-knife/privacy/">
+<link rel="alternate" hreflang="it" href="https://inerba.github.io/swiss-knife/privacy/">
+<link rel="alternate" hreflang="en" href="https://inerba.github.io/swiss-knife/en/privacy/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Informativa sulla privacy — Swiss Knife">
+<meta property="og:description" content="Swiss Knife non raccoglie, non trasmette e non vende dati personali. Informativa completa.">
+<meta property="og:url" content="https://inerba.github.io/swiss-knife/privacy/">
+<meta property="og:image" content="https://inerba.github.io/swiss-knife/assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+<header><div class="wrap nav">
+  <a class="brand" href="../"><img src="../assets/icon.svg" alt="">Swiss Knife</a>
+  <div class="nav-right">
+    <a class="lang" href="../en/privacy/" hreflang="en">English</a>
+    <a class="btn btn-ghost" href="https://github.com/inerba/swiss-knife">GitHub</a>
+  </div>
+</div></header>
+<main class="wrap doc">
+  <a class="back" href="../"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>Torna alla pagina principale</a>
+  <h1>Informativa sulla privacy — Swiss Knife</h1>
+<p><strong>Ultimo aggiornamento:</strong> 10 settembre 2026 · <strong>Versione estensione:</strong> 1.2.0</p>
+<h2>In sintesi</h2>
+<p>Swiss Knife <strong>non raccoglie, non trasmette e non vende alcun dato personale.</strong> Non esiste un
+account, non c&#39;è alcuna registrazione e nessuna informazione lascia il dispositivo dell&#39;utente
+per raggiungere gli sviluppatori o terze parti.</p>
+<p>L&#39;estensione non contiene strumenti di analisi, tracciamento o pubblicità.</p>
+<h2>Dati trattati e dove restano</h2>
+<p>Tutti gli strumenti elaborano i contenuti <strong>localmente, nel browser</strong>. Le conversioni di testo,
+il calcolo degli hash, la generazione delle password, la lettura dei QR code e l&#39;analisi degli
+elementi della pagina avvengono sul dispositivo e i risultati non vengono inviati da nessuna parte.</p>
+<p>Nel profilo locale del browser (<code>chrome.storage</code>) vengono conservate soltanto le preferenze
+scelte dall&#39;utente:</p>
+<ul>
+<li>quali strumenti sono visibili e in quale ordine;</li>
+<li>i preset di stile dei QR code;</li>
+<li>la cronologia colori, fino a un massimo di 50 voci;</li>
+<li>le opzioni dei singoli strumenti, tra cui la lingua e l&#39;eventuale password di prova dello
+strumento «Compila form».</li>
+</ul>
+<p>Questi valori restano nel profilo del browser dell&#39;utente, sono cancellabili disinstallando
+l&#39;estensione o svuotandone i dati, e non sono accessibili agli sviluppatori.</p>
+<p>I risultati delle analisi sulla pagina (screenshot, palette estratte, elementi ispezionati,
+elenchi di iframe) sono temporanei e vengono invalidati al cambio scheda o alla navigazione.</p>
+<h2>Richieste di rete</h2>
+<p>L&#39;estensione non contatta alcun server degli sviluppatori. Le uniche richieste di rete che
+possono avvenire sono conseguenza diretta di un&#39;azione dell&#39;utente:</p>
+<ul>
+<li><strong>Cattura file multimediali</strong> — per leggere formato, dimensioni e peso di un file selezionato
+dall&#39;utente, l&#39;estensione può contattare il server che ospita quel file. Le richieste non
+includono credenziali, non seguono reindirizzamenti e sono limitate a 32 MiB per file.</li>
+<li><strong>Download</strong> — i file salvati passano dal gestore download del browser e raggiungono soltanto
+i server che ospitano le risorse richieste.</li>
+</ul>
+<p>In entrambi i casi il destinatario è il sito da cui l&#39;utente ha scelto di scaricare, mai un
+servizio degli sviluppatori.</p>
+<p>Il catalogo emoji è incluso nel pacchetto dell&#39;estensione e non richiede connessione.</p>
+<h2>Autorizzazioni e loro scopo</h2>
+<table>
+<thead>
+<tr>
+<th>Autorizzazione</th>
+<th>Scopo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>activeTab</code></td>
+<td>Accesso temporaneo alla scheda, concesso dal clic dell&#39;utente sull&#39;icona dell&#39;estensione.</td>
+</tr>
+<tr>
+<td><code>scripting</code></td>
+<td>Esecuzione degli strumenti sulla pagina, solo quando l&#39;utente avvia un&#39;azione specifica.</td>
+</tr>
+<tr>
+<td><code>sidePanel</code></td>
+<td>Apertura del pannello laterale che costituisce l&#39;interfaccia.</td>
+</tr>
+<tr>
+<td><code>downloads</code></td>
+<td>Salvataggio dei file richiesti esplicitamente dall&#39;utente.</td>
+</tr>
+<tr>
+<td><code>storage</code></td>
+<td>Conservazione locale delle preferenze elencate sopra.</td>
+</tr>
+<tr>
+<td><code>clipboardWrite</code></td>
+<td>Copia negli appunti dei risultati, su richiesta dell&#39;utente.</td>
+</tr>
+<tr>
+<td><code>&lt;all_urls&gt;</code> (facoltativa)</td>
+<td>Non concessa all&#39;installazione. Viene richiesta solo se l&#39;utente sceglie «Abilita su tutti i siti» ed è revocabile in qualsiasi momento dalle impostazioni del browser.</td>
+</tr>
+</tbody></table>
+<p>L&#39;estensione non richiede l&#39;accesso in lettura agli appunti.</p>
+<h2>Cessione a terzi</h2>
+<p>Non vendiamo, non cediamo e non trasferiamo dati degli utenti a terze parti, per alcuna
+finalità. Non utilizziamo dati degli utenti per valutare l&#39;affidabilità creditizia né per
+finalità di prestito. Non esistendo raccolta di dati, non esiste alcun flusso verso l&#39;esterno.</p>
+<h2>Minori</h2>
+<p>L&#39;estensione è uno strumento di utilità generale, non è rivolta specificamente ai minori e non
+raccoglie consapevolmente dati di alcuna persona, minore inclusa.</p>
+<h2>Modifiche</h2>
+<p>Eventuali aggiornamenti di questa informativa saranno pubblicati in questo stesso file, con la
+data di revisione aggiornata in testa.</p>
+<h2>Contatti</h2>
+<p>Per domande o segnalazioni sulla privacy: <a href="https://github.com/inerba/swiss-knife/issues">https://github.com/inerba/swiss-knife/issues</a></p>
+
+</main>
+
+<footer><div class="wrap">
+  <div class="frow">
+    <a class="brand" href="../" style="font-size:14px"><img src="../assets/icon.svg" alt="">Swiss Knife</a>
+    <a href="https://github.com/inerba/swiss-knife">Codice</a>
+    <a href="https://github.com/inerba/swiss-knife/releases">Release</a>
+    <a href="https://github.com/inerba/swiss-knife/issues">Segnala un problema</a>
+    <a href="../privacy/">Privacy</a>
+  </div>
+  <p class="fnote">Swiss Knife è un progetto indipendente e non è affiliato a Google.</p>
+</div></footer>
+</body></html>

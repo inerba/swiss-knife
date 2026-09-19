@@ -29,6 +29,23 @@ function button(label: string) {
   return [...host.querySelectorAll('button')].find(item => item.textContent?.includes(label));
 }
 
+function requestField() {
+  return host.querySelector<HTMLTextAreaElement>('#context-change-request');
+}
+
+function preview(summary: string) {
+  return [...host.querySelectorAll('.context-report')].find(item => item.querySelector('summary')?.textContent === summary)?.querySelector('pre');
+}
+
+async function typeRequest(value: string) {
+  const field = requestField()!;
+  await act(async () => {
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!;
+    descriptor.set!.call(field, value);
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+}
+
 async function flush() {
   await act(async () => { await new Promise(resolve => setTimeout(resolve, 0)); });
 }
@@ -82,28 +99,50 @@ it('injects its own picker script', async () => {
   expect(host.textContent).toContain('Clicca un elemento');
 });
 
-it('copies the report automatically and shows the result', async () => {
+it('shows the result without copying and offers an agent prompt', async () => {
   await capture();
-  expect(writeText).toHaveBeenCalledTimes(1);
-  const copied = writeText.mock.calls[0]![0] as string;
-  expect(copied).toContain('# div.card');
-  expect(copied).not.toContain('![Screenshot');
-  expect(host.textContent).toContain('Report copiato negli appunti.');
+  expect(writeText).not.toHaveBeenCalled();
+  expect(host.textContent).not.toContain('copiato negli appunti');
+  expect(host.textContent).toContain('Cosa vuoi cambiare?');
+  expect(requestField()?.placeholder).toBe('Metti l’immagine a sinistra');
   expect(host.textContent).toContain('320 × 412');
-  expect(host.textContent).toMatch(/Report: \d+ KB · ~\d+ token/);
+  expect(host.textContent).toMatch(/Prompt: \d+ KB · ~\d+ token/);
+  expect(button('Copia per agente')).toBeTruthy();
+  expect(button('Copia report completo')).toBeTruthy();
   expect(button('Copia immagine')?.disabled).toBe(false);
-  expect(host.querySelector('.context-report pre')?.textContent).toBe(copied);
+  expect(preview('Anteprima prompt')?.textContent).toContain('The following context identifies');
+  expect(preview('Anteprima prompt')?.textContent).not.toContain('## Requested change');
+  expect(preview('Anteprima report')?.textContent).toContain('# div.card');
+  expect(preview('Anteprima report')?.textContent).not.toContain('![Screenshot');
   expect(host.querySelector('.context-preview-box img')?.getAttribute('src')).toBe('data:image/png;base64,abc');
 });
 
-it('asks for a manual copy when the automatic copy is refused', async () => {
-  writeText.mockRejectedValue(new Error('Document is not focused'));
+it('copies the agent prompt including the typed request', async () => {
   await capture();
-  expect(host.textContent).toContain('Chrome non ha permesso la copia automatica. Premi Copia report.');
-  expect(host.querySelector('textarea')).toBeNull();
-  await act(async () => { button('Copia report')!.click(); await Promise.resolve(); });
+  await typeRequest('Metti l’immagine a sinistra');
+  expect(preview('Anteprima prompt')?.textContent).toContain('## Requested change\n\nMetti l’immagine a sinistra');
+  await act(async () => { button('Copia per agente')!.click(); await Promise.resolve(); });
   await flush();
-  expect(host.querySelector<HTMLTextAreaElement>('textarea')?.value).toContain('# div.card');
+  expect(writeText).toHaveBeenCalledTimes(1);
+  expect(writeText.mock.calls[0]![0]).toContain('## Requested change\n\nMetti l’immagine a sinistra');
+  expect(writeText.mock.calls[0]![0]).not.toContain('## Styles');
+  expect(host.textContent).toContain('Prompt copiato negli appunti.');
+});
+
+it('copies the full report and falls back when the clipboard is refused', async () => {
+  await capture();
+  await act(async () => { button('Copia report completo')!.click(); await Promise.resolve(); });
+  await flush();
+  expect(writeText).toHaveBeenCalledTimes(1);
+  expect(writeText.mock.calls[0]![0]).toContain('# div.card');
+  expect(writeText.mock.calls[0]![0]).toContain('## Styles');
+  expect(host.textContent).toContain('Report copiato negli appunti.');
+
+  writeText.mockRejectedValue(new Error('Document is not focused'));
+  await act(async () => { button('Copia per agente')!.click(); await Promise.resolve(); });
+  await flush();
+  expect(host.querySelector<HTMLTextAreaElement>('.context-copy-fallback')?.value).toContain('The following context identifies');
+  expect(host.textContent).toContain('Impossibile scrivere negli appunti. Seleziona e copia il testo qui sotto.');
 });
 
 it('keeps the report when the screenshot fails', async () => {
@@ -111,7 +150,7 @@ it('keeps the report when the screenshot fails', async () => {
   await capture();
   expect(host.textContent).toContain('Anteprima non disponibile: il report non include lo screenshot.');
   expect(button('Copia immagine')?.disabled).toBe(true);
-  expect(writeText).toHaveBeenCalledTimes(1);
+  expect(writeText).not.toHaveBeenCalled();
 });
 
 it('reports that the image cannot be copied', async () => {
@@ -139,10 +178,12 @@ it('explains a download without the screenshot', async () => {
 
 it('invalidates the result when the tab changes and ignores late messages', async () => {
   await capture();
+  await typeRequest('Metti l’immagine a sinistra');
   expect(host.textContent).toContain('div.card');
   const late = session;
   await act(async () => api.tabs.onActivated.addListener.mock.calls[0]![0]({ windowId: 10 }));
   expect(host.textContent).not.toContain('div.card');
+  expect(requestField()).toBeNull();
   expect(host.textContent).toContain('Scheda cambiata. Avvia lo strumento per lavorare su questa pagina.');
   await act(async () => message?.({ type: 'snapshot', session: late, payload: samplePayload({ element: 'div.late' }) }));
   await flush();
