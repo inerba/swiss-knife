@@ -29,7 +29,7 @@
 <main class="wrap doc">
   <a class="back" href="../../"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>Back to the main page</a>
   <h1>Privacy Policy — Swiss Knife</h1>
-<p><strong>Last updated:</strong> 10 September 2026 · <strong>Extension version:</strong> 1.2.0</p>
+<p><strong>Last updated:</strong> 25 September 2026 · <strong>Extension version:</strong> 1.3.0</p>
 <h2>Summary</h2>
 <p>Swiss Knife <strong>does not collect, transmit or sell any personal data.</strong> There is no account and no
 sign-up, and no information leaves the user&#39;s device to reach the developers or any third party.</p>
@@ -43,12 +43,13 @@ the results are not sent anywhere.</p>
 <li>which tools are visible and in what order;</li>
 <li>saved QR code style presets;</li>
 <li>the color history, up to 50 entries;</li>
+<li>the opening mode (floating window or side panel) and the last position of the floating window;</li>
 <li>per-tool options, including the language and optional test password of the &quot;Compila form&quot; tool.</li>
 </ul>
 <p>These values remain in the user&#39;s browser profile, can be removed by uninstalling the extension
 or clearing its data, and are not accessible to the developers.</p>
 <p>Results of page analysis (screenshots, extracted palettes, inspected elements, iframe listings)
-are temporary and are invalidated when the user switches tabs or navigates away.</p>
+are temporary: they are invalidated when the user switches tabs or navigates away, and in the floating window they disappear when it is closed or the page navigates.</p>
 <h2>Network requests</h2>
 <p>The extension does not contact any developer-operated server. The only network requests that may
 occur are the direct consequence of a user action:</p>
@@ -80,7 +81,7 @@ operated by the developers.</p>
 </tr>
 <tr>
 <td><code>sidePanel</code></td>
-<td>Opening the side panel that constitutes the interface.</td>
+<td>Opening the side panel, when the user chooses it as the opening mode or as a fallback on pages where the floating window cannot appear.</td>
 </tr>
 <tr>
 <td><code>downloads</code></td>
@@ -100,6 +101,7 @@ operated by the developers.</p>
 </tr>
 </tbody></table>
 <p>The extension does not request clipboard read access.</p>
+<p>A single extension page, the floating window, is declared accessible to web pages (<code>web_accessible_resources</code>, with a dynamic URL). It is not a permission: it is loaded into the tab only when the user opens the floating window, and it neither reads nor sends page content.</p>
 <h2>Third parties</h2>
 <p>We do not sell, share or transfer user data to third parties for any purpose. We do not use
 user data to determine creditworthiness or for lending purposes. Since no data is collected,
