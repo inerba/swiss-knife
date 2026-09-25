@@ -5,7 +5,7 @@ import { App } from './App';
 
 const api = vi.hoisted(() => {
   const event = () => ({ addListener: vi.fn(), removeListener: vi.fn() });
-  return { tabs: { query: vi.fn(), create: vi.fn(), onActivated: event(), onUpdated: event(), onRemoved: event() },
+  return { tabs: { query: vi.fn(), create: vi.fn(), getCurrent: vi.fn(), connect: vi.fn(), onActivated: event(), onUpdated: event(), onRemoved: event() }, sidePanel: { close: vi.fn() },
     windows: { getCurrent: vi.fn() }, scripting: { executeScript: vi.fn() }, runtime: { openOptionsPage: vi.fn(), getManifest: vi.fn(() => ({ version: '1.1.0' })) },
     permissions: { contains: vi.fn(), request: vi.fn(), remove: vi.fn(), onAdded: event(), onRemoved: event() },
     storage: { local: { get: vi.fn(), set: vi.fn() }, onChanged: event() } };
@@ -131,4 +131,40 @@ it('explains missing permission and protected pages', async () => {
   api.tabs.query.mockResolvedValue([{ id: 1, url: 'chrome://extensions/' }]);
   await click('Aggiorna');
   expect(host.textContent).toContain('Questa pagina è protetta');
+});
+it('detaches into a floating window on the active tab and closes the panel', async () => {
+  api.tabs.query.mockResolvedValue([{ id: 1, windowId: 10, url: 'https://page.test/' }]);
+  await click('Elenca iframe');
+  api.scripting.executeScript.mockResolvedValue([{}]);
+  await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Stacca nella pagina"]')!.click());
+  expect(api.scripting.executeScript).toHaveBeenCalledWith({ target: { tabId: 1 }, files: ['/floating-window.js'] });
+  expect(api.scripting.executeScript.mock.calls.at(-1)![0].args).toEqual(['open', 'iframes']);
+  expect(api.sidePanel.close).toHaveBeenCalledWith({ windowId: 10 });
+});
+it('keeps the panel open and explains why when detaching fails', async () => {
+  api.tabs.query.mockResolvedValue([{ id: 1, windowId: 10, url: 'chrome://extensions/' }]);
+  await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Stacca nella pagina"]')!.click());
+  expect(host.querySelector('.detach-status')?.textContent).toContain('Questa pagina è protetta');
+  expect(api.sidePanel.close).not.toHaveBeenCalled();
+});
+it('in the floating window opens the handed-over tool, keeps results across tab switches and closes from its bar', async () => {
+  await act(async () => root.unmount());
+  history.replaceState(null, '', '/floating.html');
+  const posted: unknown[] = [];
+  let onMessage: (message: unknown) => void = () => {};
+  api.tabs.getCurrent.mockResolvedValue({ id: 1, url: 'https://page.test/', active: true });
+  api.tabs.connect.mockReturnValue({ postMessage: (message: unknown) => posted.push(message), onMessage: { addListener: (listener: typeof onMessage) => { onMessage = listener; } }, onDisconnect: { addListener: vi.fn() } });
+  try {
+    root = createRoot(host);
+    await act(async () => root.render(<App />));
+    expect(api.tabs.connect).toHaveBeenCalledWith(1, { frameId: 0, name: 'swiss-floating' });
+    expect(host.querySelector('[aria-label="Stacca nella pagina"]')).toBeNull();
+    expect(host.textContent).not.toContain('Usa Swiss Knife su tutte le schede');
+    await act(async () => onMessage({ type: 'init', tool: 'iframes' }));
+    expect(host.textContent).toContain('1 iframe trovati');
+    await act(async () => api.tabs.onActivated.addListener.mock.calls.at(-1)![0]({ windowId: 10 }));
+    expect(host.textContent).toContain('1 iframe trovati');
+    await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Chiudi"]')!.click());
+    expect(posted).toContainEqual({ type: 'close' });
+  } finally { history.replaceState(null, '', '/path/'); }
 });

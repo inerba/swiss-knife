@@ -1,5 +1,6 @@
 import { browser, type Browser } from 'wxt/browser';
 import type { PickedElement } from './picker';
+import { concealFloatingWindow } from '../../lib/floating-window';
 
 export type ColorSessionMode = 'pick' | 'page';
 
@@ -18,12 +19,14 @@ export async function startColorSession(
   const session = crypto.randomUUID();
   const port: Browser.runtime.Port = browser.tabs.connect(tabId, { documentId: injection.documentId, name: `swiss-color-picker:${mode}:${session}` });
   let closed = false;
+  // Palette analysis needs no selection, so the window stays visible.
+  const reveal = mode === 'pick' ? concealFloatingWindow() : () => {};
   const retryLabel = mode === 'page' ? 'Genera Palette' : 'Da elemento';
   const timeout = setTimeout(() => {
     if (closed) return;
     close(); onStatus(`Il selettore non risponde. Premi ${retryLabel} per riprovare.`); onEnd('error');
   }, 10000);
-  const close = () => { if (closed) return; closed = true; clearTimeout(timeout); signal.removeEventListener('abort', close); port.disconnect(); };
+  const close = () => { if (closed) return; closed = true; clearTimeout(timeout); signal.removeEventListener('abort', close); port.disconnect(); reveal(); };
   signal.addEventListener('abort', close, { once: true });
   port.onDisconnect.addListener(() => { if (!closed) { close(); onStatus('Connessione alla pagina terminata. Riprova la selezione.'); onEnd('disconnected'); } });
   port.onMessage.addListener(message => {

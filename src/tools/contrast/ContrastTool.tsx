@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowUpDown, Check, Copy, MousePointer2, Pipette, X } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { activeTab, explainError } from '../../lib/browser';
+import { isFloatingWindow } from '../../lib/floating-window';
 import { displayHex, parseColor } from '../colors/color';
 import { tryAnalyzeContrast } from './contrast';
 import type { ContrastSample } from './sample';
@@ -102,7 +103,7 @@ export function ContrastTool() {
       setError(false);
     };
     const activated = (info: { windowId: number }) => {
-      if (windowId === undefined || info.windowId === windowId) invalidate();
+      if (!isFloatingWindow() && (windowId === undefined || info.windowId === windowId)) invalidate();
     };
     const updated = (id: number, info: { status?: string; url?: string }) => {
       if ((target.current === id || (busyRef.current && target.current === undefined)) && (info.status === 'loading' || info.url)) invalidate();

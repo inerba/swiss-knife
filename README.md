@@ -10,7 +10,7 @@ L’interfaccia è in italiano, con tema chiaro e un catalogo personalizzabile. 
 
 ## Installazione
 
-Per usare una release non servono Node.js, pnpm o altri strumenti di sviluppo. Il progetto è sviluppato per **Chrome 123 o successivo**, con Manifest V3. Su **Microsoft Edge desktop** puoi usare la stessa build Chromium; il comportamento del pannello e dei permessi va verificato nel browser utilizzato.
+Per usare una release non servono Node.js, pnpm o altri strumenti di sviluppo. Il progetto è sviluppato per **Chrome 141 o successivo**, con Manifest V3. Su **Microsoft Edge desktop** puoi usare la stessa build Chromium; il comportamento del pannello e dei permessi va verificato nel browser utilizzato.
 
 ### Dal file ZIP
 
@@ -35,6 +35,23 @@ Apri il pannello dall’icona **Swiss Knife** mentre è attiva la pagina su cui 
 Per usare gli strumenti passando tra siti e schede puoi scegliere **Abilita su tutti i siti** e confermare la richiesta del browser. L’autorizzazione è facoltativa e revocabile dalle impostazioni. Senza questo consenso, usa l’icona dell’estensione sulla pagina desiderata prima di avviare un’operazione.
 
 Al cambio scheda o alla navigazione, le operazioni e i risultati legati alla pagina precedente vengono invalidati. Lo strumento rimane selezionato e attende una nuova azione: non riparte una scansione automaticamente.
+
+### Pannello laterale o finestra mobile
+
+In **Impostazioni → Apertura** scegli dove si apre Swiss Knife quando clicchi la sua icona:
+
+- **Pannello laterale**: il pannello di Chrome accanto alle schede, che resta aperto quando cambi scheda e lavora sulla scheda attiva.
+- **Finestra mobile** (predefinita): una piccola finestra dentro la pagina, che sposti trascinando la barra del titolo e che ricorda l’ultima posizione. Appartiene alla scheda in cui l’hai aperta: cambiare scheda non azzera i risultati, mentre ricaricare o navigare la pagina la chiude. Si chiude anche con la **X** o con un nuovo clic sull’icona. In questa modalità Swiss Knife non compare nel menu dei pannelli laterali di Chrome.
+
+Dal pannello laterale, il pulsante **Stacca nella pagina** apre una volta sola la finestra mobile sulla scheda attiva, con lo stesso strumento ma senza i risultati, e chiude il pannello; la preferenza salvata non cambia.
+
+Limiti della finestra mobile:
+
+- sulle pagine interne di Chrome e sul Chrome Web Store si apre il pannello laterale al suo posto. Se una pagina impedisce alla finestra di avviarsi (per esempio con intestazioni COEP o CSP `sandbox`), compare un avviso e il clic successivo sull’icona apre il pannello;
+- alcuni siti bloccano gli appunti per i frame incorporati: la copia di testo usa allora un metodo alternativo, mentre la copia di immagini mostra il messaggio di copia non riuscita. Anche **Incolla** di Codifica e converti può chiedere un permesso o non funzionare;
+- mentre la pagina mostra un proprio dialogo modale la finestra non risponde, e alcune pagine possono sottrarle il focus;
+- lo zoom della pagina ingrandisce anche la finestra;
+- mentre selezioni qualcosa sulla pagina (Browser context, Ispeziona e salva, Contrasti, Colori, QR code, Cattura file multimediali, Compila form, Screenshot di una selezione) la finestra scompare e ricompare quando la selezione è confermata o annullata; conferma con il pulsante **Conferma** o Invio nella pagina. Durante le catture viene nascosta per un istante, e **Elenca iframe** la ignora. Mentre è aperta, la pagina può accorgersi della sua presenza.
 
 Nelle **Impostazioni** puoi attivare o nascondere gli strumenti e modificarne l’ordine, trascinandoli o usando i pulsanti di spostamento. Il catalogo consente anche ricerca e ordinamento alfabetico. Le preferenze vengono conservate nel profilo locale del browser.
 
@@ -144,7 +161,7 @@ Gli iframe di un’altra origine possono essere elencati, ma il loro contenuto n
 
 ### Browser context
 
-Premi **Seleziona**, fai clic su un elemento per fissarlo, regola la selezione con **Amplia**/**Restringi** (o ↑/↓) e premi **Conferma**. Nella schermata del risultato puoi scrivere in **Cosa vuoi cambiare?** (facoltativo) e premere **Copia per agente**: ottieni un prompt inglese pronto da incollare in un coding agent come Claude Code, Codex, Copilot o Cursor. **Esc** annulla.
+Aprendo lo strumento la selezione parte subito (per una nuova selezione premi **Seleziona**): fai clic su un elemento per fissarlo, regola la selezione con **Amplia**/**Restringi** (o ↑/↓) e premi **Conferma**. Nella schermata del risultato puoi scrivere in **Cosa vuoi cambiare?** (facoltativo) e premere **Copia per agente**: ottieni un prompt inglese pronto da incollare in un coding agent come Claude Code, Codex, Copilot o Cursor. **Esc** annulla.
 
 Il prompt per agente non sintetizza: assembla un preambolo fisso, l’eventuale richiesta così come l’hai scritta e un insieme predefinito dei fatti già raccolti (URL, elemento, percorso DOM, selettore CSS breve, dimensioni renderizzate, markup e regole CSS corrispondenti come scritte, con file di origine). **Copia report completo** conserva il report Markdown tecnico inglese: viewport, XPath, markup e le regole CSS che colpiscono l’elemento così come sono scritte, con file di origine e contesto `@media`, `@supports`, `@layer` o `@container`. Include anche le regole di altri breakpoint, gli stati `:hover`/`:focus`/`:active`, gli stili ereditati, `::before`/`::after`, i valori calcolati diversi dal default del browser e le variabili CSS usate. Lo screenshot resta disponibile a parte con **Copia immagine** o nel download di `.md` e `.png` in `Download/swiss-knife/browser-context/`.
 
@@ -158,10 +175,11 @@ I fogli di stile cross-origin non sono leggibili e vengono elencati nel report; 
 | --- | --- |
 | `activeTab` | Accesso temporaneo alla scheda dopo il clic sull’icona dell’estensione. |
 | `scripting` | Esecuzione dei selettori e degli strumenti sulla pagina richiesta. |
-| `sidePanel` | Apertura del pannello laterale. |
+| `sidePanel` | Apertura del pannello laterale, o sua disattivazione quando scegli la finestra mobile. |
 | `downloads` | Salvataggio dei file tramite il gestore download del browser. |
 | `storage` | Preferenze locali, preset e cronologia colori. |
 | `clipboardWrite` | Copia dei risultati negli appunti su richiesta. |
+| `web_accessible_resources` | Solo la pagina della finestra mobile, caricata nella scheda al clic, con URL dinamico (`use_dynamic_url`). Non è un permesso. |
 | `<all_urls>` facoltativo | Accesso ai siti dopo un consenso esplicito; non viene concesso all’installazione. |
 
 I contenuti analizzati non vengono inviati a servizi esterni di analisi. Il recupero dei file multimediali e i download contattano i server che ospitano le risorse; i file salvati e la cronologia download rimangono gestiti dal browser.
@@ -201,8 +219,9 @@ Gli script WXT includono `--no-experimental-webstorage` per evitare incompatibil
 ### Struttura del progetto
 
 ```text
-entrypoints/          Pannello, impostazioni, background e script iniettati
-src/App.tsx           Struttura comune del pannello
+entrypoints/          Pannello, finestra mobile, impostazioni, background e script iniettati
+src/App.tsx           Struttura comune del pannello e della finestra mobile
+docs/adr/             Decisioni architetturali
 src/tools/            Moduli degli strumenti
 src/tools/types.ts    Contratto ToolDefinition
 src/tools/registry.ts Registro del catalogo

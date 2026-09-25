@@ -51,7 +51,7 @@ async function flush() {
 }
 
 async function capture(payload = samplePayload()) {
-  await act(async () => { button('Seleziona')!.click(); await Promise.resolve(); });
+  await flush();
   await act(async () => message?.({ type: 'ready', session }));
   await act(async () => message?.({ type: 'snapshot', session, payload }));
   await flush();
@@ -91,9 +91,9 @@ afterEach(async () => {
   host.remove();
 });
 
-it('injects its own picker script', async () => {
+it('starts its own picker as soon as the tool opens', async () => {
   expect(host.querySelector('h2')?.textContent).toBe('Browser context');
-  await act(async () => { button('Seleziona')!.click(); await Promise.resolve(); });
+  await flush();
   expect(api.scripting.executeScript).toHaveBeenCalledWith({ target: { tabId: 1 }, files: ['/browser-context.js'] });
   expect(api.tabs.connect).toHaveBeenCalledWith(1, expect.objectContaining({ name: expect.stringMatching(/^swiss-browser-context:/) }));
   expect(host.textContent).toContain('Clicca un elemento');
@@ -191,7 +191,7 @@ it('invalidates the result when the tab changes and ignores late messages', asyn
 });
 
 it('sends confirm from the lock bar and shows the collecting status', async () => {
-  await act(async () => { button('Seleziona')!.click(); await Promise.resolve(); });
+  await flush();
   await act(async () => message?.({ type: 'ready', session }));
   await act(async () => message?.({ type: 'locked', session, preview: { tag: 'div', tagLabel: 'Div', selector: 'div.card', dimensions: '320 × 412' } }));
   await act(async () => { button('Conferma')!.click(); await Promise.resolve(); });
@@ -200,7 +200,7 @@ it('sends confirm from the lock bar and shows the collecting status', async () =
 });
 
 it('cancels with Escape while picking', async () => {
-  await act(async () => { button('Seleziona')!.click(); await Promise.resolve(); });
+  await flush();
   await act(async () => message?.({ type: 'ready', session }));
   await act(async () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));

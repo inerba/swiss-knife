@@ -269,3 +269,21 @@ code, pre, .generated-text, .password-row input { font-family: var(--font-mono);
 .settings-tools > li.drop-after::after { bottom: -11px; }
 .settings-tools:has(.dragging) { cursor: grabbing; }
 @media (forced-colors: active) { .settings-tools > li::after { background: Highlight; } }
+
+/* Header buttons, floating window bar and opening mode settings. */
+.icon-button + .icon-button { margin-left: 0; }
+.floating-bar { padding: 8px 10px 8px 12px; cursor: grab; user-select: none; touch-action: none; }
+.floating-bar:active { cursor: grabbing; }
+.floating-bar .brand-icon { width: 28px; height: 28px; border-radius: 9px; }
+.floating-bar .brand-icon svg { width: 18px; height: 18px; }
+.floating-bar h1 { font-size: 15px; }
+.floating-bar .icon-button { cursor: pointer; }
+.detach-status { margin: 0 0 12px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); font-size: 12px; }
+.open-mode-settings { margin: 0 0 20px; padding: 14px; border-radius: 16px; background: var(--bg); box-shadow: var(--shadow-card); }
+.open-mode-settings h2 { font-size: 1rem; }
+.open-mode-settings fieldset { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; border: 0; }
+.open-mode-settings label { display: flex; align-items: flex-start; gap: 10px; margin: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
+.open-mode-settings label:has(input:checked) { border-color: var(--ios-accent-glow); background: var(--ios-accent-soft); }
+.open-mode-settings input[type=radio] { width: auto; margin: 3px 0 0; accent-color: var(--accent); }
+.open-mode-settings strong { display: block; font-size: 13px; }
+.open-mode-settings small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; }

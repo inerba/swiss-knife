@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ExternalLink, RefreshCw } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { activeTab, explainError, openUrl } from '../../lib/browser';
+import { isFloatingWindow } from '../../lib/floating-window';
 import { scanIframes, type ScanResult } from './scan';
 
 export function IframeTool() {
@@ -38,7 +39,7 @@ export function IframeTool() {
       setMessage('Scheda cambiata. Avvia lo strumento per lavorare su questa pagina.');
     };
     const activated = (info: { windowId: number }) => {
-      if (windowId === undefined || info.windowId === windowId) invalidate();
+      if (!isFloatingWindow() && (windowId === undefined || info.windowId === windowId)) invalidate();
     };
     const updated = (id: number, info: { status?: string; url?: string }) => {
       if (id === target.current && (info.status === 'loading' || info.url)) invalidate();

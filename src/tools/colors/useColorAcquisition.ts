@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { browser } from 'wxt/browser';
 import { activeTab, explainError } from '../../lib/browser';
+import { isFloatingWindow } from '../../lib/floating-window';
 import { startColorSession, type ColorSessionMode } from './session';
 import type { PickedElement } from './picker';
 
@@ -40,7 +41,7 @@ export function useColorAcquisition(onCapture: (value: string) => Promise<void>)
       reset(); clearResult(); setBusy(false); setError(false);
       setMessage('Scheda cambiata. Avvia lo strumento per lavorare su questa pagina.');
     };
-    const activated = (info: { windowId: number }) => { if (windowId === undefined || info.windowId === windowId) invalidate(); };
+    const activated = (info: { windowId: number }) => { if (!isFloatingWindow() && (windowId === undefined || info.windowId === windowId)) invalidate(); };
     const updated = (id: number, info: { status?: string; url?: string }) => {
       if ((target.current === id || (locked.current && target.current === undefined)) && (info.status === 'loading' || info.url)) invalidate();
     };

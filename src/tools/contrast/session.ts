@@ -1,5 +1,6 @@
 import { browser, type Browser } from 'wxt/browser';
 import type { ContrastSample } from './sample';
+import { concealFloatingWindow } from '../../lib/floating-window';
 
 function isSample(value: unknown): value is ContrastSample {
   if (!value || typeof value !== 'object') return false;
@@ -24,6 +25,7 @@ export async function startContrastSession(
     name: `swiss-contrast:${session}`,
   });
   let closed = false;
+  const reveal = concealFloatingWindow();
   const timeout = setTimeout(() => {
     if (closed) return;
     close();
@@ -36,6 +38,7 @@ export async function startContrastSession(
     clearTimeout(timeout);
     signal.removeEventListener('abort', close);
     port.disconnect();
+    reveal();
   };
   signal.addEventListener('abort', close, { once: true });
   port.onDisconnect.addListener(() => {

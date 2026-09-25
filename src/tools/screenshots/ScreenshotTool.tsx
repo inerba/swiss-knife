@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Camera, Crop, Download, Monitor, ScanLine } from 'lucide-react';
 import { browser } from 'wxt/browser';
-import { activeTab, explainError } from '../../lib/browser';
+import { activeTab, captureVisibleTab, explainError } from '../../lib/browser';
+import { concealFloatingWindow, isFloatingWindow } from '../../lib/floating-window';
 import { assertCanvasSize, chooseRectangle, convertScreenshot, cropScreenshot, encodeCanvas, fullPageOutputScale, moveTo, outerWidthForViewport, preparePageCapture, readPageSize, restorePageCapture, screenshotFilename, screenshotFormats, screenshotScale, setAffixedHidden, type PageSize, type ScreenshotFormat } from './capture';
 
 type Mode = 'pagina' | 'schermata' | 'selezione';
@@ -17,7 +18,7 @@ export function ScreenshotTool() {
   const target = useRef<number | null>(null);
 
   async function captureVisible(windowId: number) {
-    return browser.tabs.captureVisibleTab(windowId, { format: 'png' });
+    return captureVisibleTab(windowId);
   }
   async function deliver(dataUrl: string, mode: Mode, selectedFormat: ScreenshotFormat, selectedDestination: Destination) {
     if (selectedDestination === 'download') {
@@ -156,7 +157,8 @@ export function ScreenshotTool() {
         await deliver(image, mode, selectedFormat, selectedDestination);
       }
       else {
-        const [selection] = await browser.scripting.executeScript({ target: { tabId: tab.id }, func: chooseRectangle });
+        const reveal = concealFloatingWindow();
+        const [selection] = await browser.scripting.executeScript({ target: { tabId: tab.id }, func: chooseRectangle }).finally(reveal);
         if (generation !== request.current) return;
         if (!selection?.result) { setStatus('Selezione annullata.'); return; }
         setStatus('Preparazione dello screenshot selezionato…');
@@ -175,7 +177,7 @@ export function ScreenshotTool() {
     let windowId: number | undefined;
     void browser.windows.getCurrent().then(item => { windowId = item.id; });
     const invalidate = () => { request.current++; target.current = null; setBusy(false); setStatus('Scheda cambiata. Avvia lo strumento per lavorare su questa pagina.'); };
-    const activated = (info: { windowId: number }) => { if (windowId === undefined || info.windowId === windowId) invalidate(); };
+    const activated = (info: { windowId: number }) => { if (!isFloatingWindow() && (windowId === undefined || info.windowId === windowId)) invalidate(); };
     const updated = (id: number, info: { status?: string; url?: string }) => { if (id === target.current && (info.status === 'loading' || info.url)) invalidate(); };
     browser.tabs.onActivated.addListener(activated); browser.tabs.onUpdated.addListener(updated);
     return () => { request.current++; browser.tabs.onActivated.removeListener(activated); browser.tabs.onUpdated.removeListener(updated); };

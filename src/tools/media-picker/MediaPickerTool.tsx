@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Clipboard, Download, ExternalLink, ScanEye, ShieldCheck, RefreshCw } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { activeTab, explainError, openUrl } from '../../lib/browser';
+import { isFloatingWindow } from '../../lib/floating-window';
 import { initialDetails, readDetails, formatBytes } from './metadata';
 import { startSession, type PickerSession } from './session';
 import type { MediaCandidate, MediaDetails, MediaSelection } from './types';
@@ -156,7 +157,7 @@ export function MediaPickerTool() {
     let windowId: number | undefined;
     void (async () => { try { windowId = (await browser.windows.getCurrent()).id; } catch { /* Invalidate conservatively. */ } })();
     const invalidate = () => { clear(); setRows([]); setSelection(null); setStatus('Scheda cambiata. Avvia lo strumento per lavorare su questa pagina.'); };
-    const activated = (info: { windowId: number }) => { if (windowId === undefined || info.windowId === windowId) invalidate(); };
+    const activated = (info: { windowId: number }) => { if (!isFloatingWindow() && (windowId === undefined || info.windowId === windowId)) invalidate(); };
     const updated = (id: number, info: { status?: string; url?: string }) => { if (id === target.current && (info.status === 'loading' || info.url)) invalidate(); };
     const removed = (id: number) => { if (id === target.current) invalidate(); };
     const downloaded = (delta: { id: number; state?: { current?: string }; error?: { current?: string } }) => {

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDown, ArrowUp, Check, Copy, Download, Expand, Image as ImageIcon, MousePointerClick, X } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { activeTab, explainError } from '../../lib/browser';
+import { isFloatingWindow } from '../../lib/floating-window';
 import type { PickerEndReason, PickerSessionControl } from '../inspect-save/picker-session';
 import type { LockedPreview, PickerCommand } from '../inspect-save/types';
 import { downloadReport } from './download';
@@ -96,7 +97,7 @@ export function BrowserContextTool() {
       invalidatePageState(message || undefined, true);
     };
     const activated = (info: { windowId: number }) => {
-      if (windowId === undefined || info.windowId === windowId) invalidate();
+      if (!isFloatingWindow() && (windowId === undefined || info.windowId === windowId)) invalidate();
     };
     const updated = (id: number, info: { status?: string; url?: string }) => {
       if ((target.current === id || (busyRef.current && target.current === undefined)) && (info.status === 'loading' || info.url)) invalidate();
@@ -231,6 +232,9 @@ export function BrowserContextTool() {
       }
     }
   }
+
+  // Selecting is the only thing to do here, so opening the tool (a user click) already starts it.
+  useEffect(() => { void startPicker(); }, []);
 
   async function togglePicker() {
     if (active) {
