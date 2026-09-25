@@ -1,6 +1,6 @@
 # Informativa sulla privacy — Swiss Knife
 
-**Ultimo aggiornamento:** 10 settembre 2026 · **Versione estensione:** 1.2.0
+**Ultimo aggiornamento:** 25 settembre 2026 · **Versione estensione:** 1.3.0
 
 *(English version below.)*
 
@@ -24,6 +24,7 @@ scelte dall'utente:
 - quali strumenti sono visibili e in quale ordine;
 - i preset di stile dei QR code;
 - la cronologia colori, fino a un massimo di 50 voci;
+- la modalità di apertura (finestra mobile o pannello laterale) e l'ultima posizione della finestra mobile;
 - le opzioni dei singoli strumenti, tra cui la lingua e l'eventuale password di prova dello
   strumento «Compila form».
 
@@ -31,7 +32,7 @@ Questi valori restano nel profilo del browser dell'utente, sono cancellabili dis
 l'estensione o svuotandone i dati, e non sono accessibili agli sviluppatori.
 
 I risultati delle analisi sulla pagina (screenshot, palette estratte, elementi ispezionati,
-report di contesto per agenti AI, elenchi di iframe) sono temporanei e vengono invalidati al cambio scheda o alla navigazione.
+report di contesto per agenti AI, elenchi di iframe) sono temporanei: vengono invalidati al cambio scheda o alla navigazione, e nella finestra mobile scompaiono con la sua chiusura o con la navigazione della pagina.
 
 ## Richieste di rete
 
@@ -55,13 +56,15 @@ Il catalogo emoji è incluso nel pacchetto dell'estensione e non richiede connes
 | --- | --- |
 | `activeTab` | Accesso temporaneo alla scheda, concesso dal clic dell'utente sull'icona dell'estensione. |
 | `scripting` | Esecuzione degli strumenti sulla pagina, solo quando l'utente avvia un'azione specifica. |
-| `sidePanel` | Apertura del pannello laterale che costituisce l'interfaccia. |
+| `sidePanel` | Apertura del pannello laterale, quando l'utente lo sceglie come modalità di apertura o come ripiego sulle pagine dove la finestra mobile non può comparire. |
 | `downloads` | Salvataggio dei file richiesti esplicitamente dall'utente. |
 | `storage` | Conservazione locale delle preferenze elencate sopra. |
 | `clipboardWrite` | Copia negli appunti dei risultati, su richiesta dell'utente. |
 | `<all_urls>` (facoltativa) | Non concessa all'installazione. Viene richiesta solo se l'utente sceglie «Abilita su tutti i siti» ed è revocabile in qualsiasi momento dalle impostazioni del browser. |
 
 L'estensione non richiede l'accesso in lettura agli appunti.
+
+Una sola pagina dell'estensione, quella della finestra mobile, è dichiarata accessibile dalle pagine web (`web_accessible_resources`, con URL dinamico). Non è un'autorizzazione: viene caricata nella scheda solo quando l'utente apre la finestra mobile, e non legge né invia contenuti della pagina.
 
 ## Cessione a terzi
 
@@ -87,7 +90,7 @@ Per domande o segnalazioni sulla privacy: <https://github.com/inerba/swiss-knife
 
 # Privacy Policy — Swiss Knife
 
-**Last updated:** 10 September 2026 · **Extension version:** 1.2.0
+**Last updated:** 25 September 2026 · **Extension version:** 1.3.0
 
 ## Summary
 
@@ -107,6 +110,7 @@ Only user preferences are stored in the local browser profile (`chrome.storage`)
 - which tools are visible and in what order;
 - saved QR code style presets;
 - the color history, up to 50 entries;
+- the opening mode (floating window or side panel) and the last position of the floating window;
 - per-tool options, including the language and optional test password of the "Compila form" tool.
 
 These values remain in the user's browser profile, can be removed by uninstalling the extension
@@ -114,7 +118,7 @@ or clearing its data, and are not accessible to the developers.
 
 Results of page analysis (screenshots, extracted palettes, inspected elements,
 browser context reports for AI agents, iframe listings)
-are temporary and are invalidated when the user switches tabs or navigates away.
+are temporary: they are invalidated when the user switches tabs or navigates away, and in the floating window they disappear when it is closed or the page navigates.
 
 ## Network requests
 
@@ -138,13 +142,15 @@ The emoji catalog is bundled with the extension and requires no connection.
 | --- | --- |
 | `activeTab` | Temporary access to the tab, granted by the user's click on the extension icon. |
 | `scripting` | Running the tools on the page, only when the user starts a specific action. |
-| `sidePanel` | Opening the side panel that constitutes the interface. |
+| `sidePanel` | Opening the side panel, when the user chooses it as the opening mode or as a fallback on pages where the floating window cannot appear. |
 | `downloads` | Saving files the user explicitly requests. |
 | `storage` | Local storage of the preferences listed above. |
 | `clipboardWrite` | Copying results to the clipboard, at the user's request. |
 | `<all_urls>` (optional) | Not granted at install time. Requested only if the user chooses "Enable on all sites", and revocable at any time from the browser settings. |
 
 The extension does not request clipboard read access.
+
+A single extension page, the floating window, is declared accessible to web pages (`web_accessible_resources`, with a dynamic URL). It is not a permission: it is loaded into the tab only when the user opens the floating window, and it neither reads nor sends page content.
 
 ## Third parties
 
