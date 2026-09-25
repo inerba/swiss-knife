@@ -4,6 +4,7 @@ import { beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { SettingsApp } from './SettingsApp';
 const api = vi.hoisted(() => ({ save: vi.fn() }));
 vi.mock('./components/GlobalSiteAccessSettings', () => ({ GlobalSiteAccessSettings: () => null }));
+vi.mock('./components/OpenModeSettings', () => ({ OpenModeSettings: () => null }));
 vi.mock('./tools/registry', () => ({ tools: ['a', 'b', 'c'].map(id => ({ id, name: id, description: id, icon: () => null })) }));
 vi.mock('./lib/preferences', () => ({ loadToolPreferences: async () => ({ preferences: { orderedIds: ['a', 'b', 'c'], disabledIds: [] } }), saveToolPreferences: api.save }));
 let root: Root, host: HTMLDivElement;

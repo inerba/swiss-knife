@@ -1,5 +1,6 @@
 import { browser, type Browser } from 'wxt/browser';
 import { captureElementPng } from './capture';
+import { concealFloatingWindow } from '../../lib/floating-window';
 import type { ElementCaptureResult } from './element-capture';
 import type { InspectRect, LockedPreview, PickerCommand } from './types';
 
@@ -40,6 +41,7 @@ export async function startPickerSession<T extends { rect: InspectRect }>(
     name: `${portPrefix}:${session}`,
   });
   let closed = false;
+  const reveal = concealFloatingWindow();
   const timeout = setTimeout(() => {
     if (closed) return;
     close();
@@ -52,6 +54,7 @@ export async function startPickerSession<T extends { rect: InspectRect }>(
     clearTimeout(timeout);
     signal.removeEventListener('abort', close);
     port.disconnect();
+    reveal();
   };
   signal.addEventListener('abort', close, { once: true });
   let isolateWait: { resolve(): void } | undefined;

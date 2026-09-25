@@ -1,4 +1,5 @@
 import { browser } from 'wxt/browser';
+import { captureVisibleTab } from '../../lib/browser';
 import {
   assertCanvasSize,
   cropScreenshot,
@@ -45,7 +46,7 @@ function viewportCropRect(rect: InspectRect) {
 }
 
 async function captureVisible(windowId: number) {
-  return browser.tabs.captureVisibleTab(windowId, { format: 'png' });
+  return captureVisibleTab(windowId);
 }
 
 async function cropViewportShot(dataUrl: string, rect: InspectRect) {

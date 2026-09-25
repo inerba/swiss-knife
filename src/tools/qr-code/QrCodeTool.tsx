@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Clipboard, Download, ExternalLink, ImageUp, MousePointer2, QrCode, Save, Trash2 } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { activeTab, explainError, openUrl } from '../../lib/browser';
+import { isFloatingWindow } from '../../lib/floating-window';
 import { decodeQrDataUrl, renderQr } from './codec';
 import { buildQrPayload, type QrPayloadFields, type QrPayloadKind } from './payload';
 import { deleteQrStylePreset, loadQrStylePresets, saveQrStylePresets, upsertQrStylePreset, type QrUserPreset } from './presets';
@@ -151,7 +152,7 @@ export function QrCodeTool() {
       setBusy(false);
       setStatus('Scheda cambiata. Avvia di nuovo la lettura su questa pagina.');
     };
-    const activated = (info: { windowId: number }) => { if (windowId === undefined || info.windowId === windowId) invalidate(); };
+    const activated = (info: { windowId: number }) => { if (!isFloatingWindow() && (windowId === undefined || info.windowId === windowId)) invalidate(); };
     const updated = (id: number, info: { status?: string; url?: string }) => { if (id === target.current && (info.status === 'loading' || info.url)) invalidate(); };
     browser.tabs.onActivated.addListener(activated);
     browser.tabs.onUpdated.addListener(updated);

@@ -3,6 +3,7 @@ import { ArrowDown, ArrowUp, GripVertical, PocketKnife } from 'lucide-react';
 import { tools } from './tools/registry';
 import { loadToolPreferences, saveToolPreferences, type ToolPreferences } from './lib/preferences';
 import { GlobalSiteAccessSettings } from './components/GlobalSiteAccessSettings';
+import { OpenModeSettings } from './components/OpenModeSettings';
 
 const ids = tools.map(tool => tool.id);
 function move(list: string[], from: number, to: number) { const next = [...list]; const [item] = next.splice(from, 1); if (item) next.splice(to, 0, item); return next; }
@@ -23,6 +24,7 @@ export function SettingsApp() {
   if (!preferences) return <main className="settings-page">{status === 'error' ? <><p role="alert" className="empty">Impossibile caricare le impostazioni.</p><button onClick={() => { setStatus('saved'); void loadToolPreferences(ids).then(({ preferences }) => setPreferences(preferences)).catch(() => setStatus('error')); }}>Riprova</button></> : <p role="status">Caricamento impostazioni…</p>}</main>;
   const ordered = preferences.orderedIds.map(id => tools.find(tool => tool.id === id)!).filter(Boolean);
   return <><header className="brand settings-brand"><span className="brand-icon" aria-hidden="true"><PocketKnife /></span><div><h1>Impostazioni</h1><p>Personalizza Swiss Knife.</p></div></header><main className="settings-page">
+    <OpenModeSettings />
     <GlobalSiteAccessSettings />
     <div className="section-heading"><div><h2>Strumenti</h2><p className="muted">Scegli cosa mostrare e trascina per cambiare l’ordine.</p></div><p className={`save-status ${status}`} role="status">{status === 'saving' ? 'Salvataggio…' : status === 'error' ? 'Impossibile salvare.' : 'Salvato'}</p></div>
     {status === 'error' && <button onClick={() => persist(preferences)}>Riprova</button>}

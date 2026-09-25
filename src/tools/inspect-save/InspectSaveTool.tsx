@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowDown, ArrowUp, Check, Copy, Download, Expand, FileCode, MousePointerClick, X } from 'lucide-react';
 import { browser } from 'wxt/browser';
 import { activeTab, explainError } from '../../lib/browser';
+import { isFloatingWindow } from '../../lib/floating-window';
 import { inspectFilename } from './capture';
 import { startInspectSession, type InspectSessionControl } from './session';
 import type { InfoRow, InfoSection, InspectSnapshot, LockedPreview, PickerCommand } from './types';
@@ -91,7 +92,7 @@ export function InspectSaveTool() {
       invalidatePageState(message || undefined, true);
     };
     const activated = (info: { windowId: number }) => {
-      if (windowId === undefined || info.windowId === windowId) invalidate();
+      if (!isFloatingWindow() && (windowId === undefined || info.windowId === windowId)) invalidate();
     };
     const updated = (id: number, info: { status?: string; url?: string }) => {
       if ((target.current === id || (busyRef.current && target.current === undefined)) && (info.status === 'loading' || info.url)) invalidate();
