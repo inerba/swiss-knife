@@ -12,6 +12,10 @@ L’interfaccia è in italiano, con tema chiaro e un catalogo personalizzabile. 
 
 Per usare una release non servono Node.js, pnpm o altri strumenti di sviluppo. Il progetto è sviluppato per **Chrome 141 o successivo**, con Manifest V3. Su **Microsoft Edge desktop** puoi usare la stessa build Chromium; il comportamento del pannello e dei permessi va verificato nel browser utilizzato.
 
+### Dal Chrome Web Store (consigliato)
+
+Installa Swiss Knife dal [Chrome Web Store](https://chromewebstore.google.com/detail/swiss-knife/gicimodpmmdamcmnicfcajmopdpabnni): è la strada più semplice e ricevi gli aggiornamenti in automatico. Lo ZIP delle release serve solo se vuoi una versione non ancora pubblicata sullo store o installarla a mano.
+
 ### Dal file ZIP
 
 1. Scarica lo ZIP dell’estensione dalla pagina [Releases](https://github.com/inerba/swiss-knife/releases). Scegli il pacchetto `swiss-knife-<versione>-chrome.zip`, non gli archivi **Source code** generati da GitHub.
